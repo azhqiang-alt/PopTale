@@ -143,7 +143,7 @@ async function loadBook(meta, onProgress) {
   const base = `books/${meta.id}`;
   onProgress(0.05, "正在翻找这本书…");
   const story = await (await fetch(`${base}/story.json`)).json();
-  const entries = Object.entries(story.art || {});
+  const entries = Object.entries(story.art || {}).filter(([, a]) => a.kind !== "cover");
   const art = {};
   let n = 0;
   await Promise.all(entries.map(async ([id, a]) => {

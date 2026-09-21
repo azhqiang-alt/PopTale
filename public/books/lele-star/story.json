@@ -4,26 +4,133 @@
   "subtitle": "一只小兔和一颗迷路的星星",
   "blurb": "一颗小星星从天上掉了下来。小兔乐乐提着灯笼，穿过花园和森林，要把它送回家。",
   "language": "zh",
-  "cover": "art/cover.svg",
-  "colors": { "cloth": "#2b3a78", "endpaper": "#f3c86b" },
-  "narrator": { "voice": "Tingting", "rate": 150 },
+  "cover": "art/cover.webp",
+  "colors": {
+    "cloth": "#2b3a78",
+    "endpaper": "#f3c86b"
+  },
+  "narrator": {
+    "provider": "qwen",
+    "voice": "vivian",
+    "instruct": "用温柔、缓慢、充满好奇的语气，给小朋友讲睡前故事",
+    "say": {
+      "voice": "Tingting",
+      "rate": 150
+    }
+  },
+  "artStyle": "Children's picture book illustration, soft gouache and watercolor texture with gentle colored-pencil lines, cute rounded shapes, storybook art.",
+  "sceneStyle": "Warm cozy night palette of deep blue, violet and golden glow.",
   "art": {
-    "bg-bedroom": { "file": "art/bg-bedroom.svg" },
-    "bg-garden": { "file": "art/bg-garden.svg" },
-    "bg-forest": { "file": "art/bg-forest.svg" },
-    "bg-pond": { "file": "art/bg-pond.svg" },
-    "bg-hill": { "file": "art/bg-hill.svg" },
-    "lele": { "file": "art/lele.svg", "outline": 7 },
-    "star": { "file": "art/star.svg", "outline": 6 },
-    "lantern": { "file": "art/lantern.svg", "outline": 6 },
-    "fireflies": { "file": "art/fireflies.svg" },
-    "owl": { "file": "art/owl.svg", "outline": 7 },
-    "tree": { "file": "art/tree.svg", "outline": 7 },
-    "mushroom": { "file": "art/mushroom.svg", "outline": 6 },
-    "flower": { "file": "art/flower.svg", "outline": 6 },
-    "lily": { "file": "art/lily.svg", "outline": 6 },
-    "frog": { "file": "art/frog.svg", "outline": 6 },
-    "bed": { "file": "art/bed.svg", "outline": 7 }
+    "cover": {
+      "file": "art/cover.webp",
+      "kind": "cover",
+      "prompt": "A small white bunny girl with long ears and a red knitted scarf sits on a grassy hill at night, hugging a softly glowing golden star with a smiling face, under a huge starry sky with a crescent moon.",
+      "subtitle": "萤火绘本 · 第一册",
+      "seed": 43703
+    },
+    "bg-bedroom": {
+      "file": "art/bg-bedroom.webp",
+      "kind": "scene",
+      "prompt": "A cozy child's bedroom at night seen from inside: a big arched window in the middle shows a starry night sky with a crescent moon, pink curtains on both sides, patterned violet wallpaper, a wooden floor, soft lamplight.",
+      "seed": 11370
+    },
+    "bg-garden": {
+      "file": "art/bg-garden.webp",
+      "kind": "scene",
+      "prompt": "A quiet flower garden at night with a white wooden picket fence, round bushes and small flowers, rolling hills behind, a crescent moon in a starry sky.",
+      "seed": 42831
+    },
+    "bg-forest": {
+      "file": "art/bg-forest.webp",
+      "kind": "scene",
+      "prompt": "A deep enchanted forest at night: tall dark tree trunks, soft blue-green mist, tiny glowing lights floating between the trees, a winding path into the distance.",
+      "seed": 97238
+    },
+    "bg-pond": {
+      "file": "art/bg-pond.webp",
+      "kind": "scene",
+      "prompt": "A calm pond at night surrounded by reeds and cattails, the crescent moon reflected on the still water, a starry sky above.",
+      "seed": 37425
+    },
+    "bg-hill": {
+      "file": "art/bg-hill.webp",
+      "kind": "scene",
+      "prompt": "A gentle grassy hill under a huge starry night sky with a crescent moon and a small round tree on the hilltop.",
+      "seed": 73304
+    },
+    "lele": {
+      "file": "art/lele.webp",
+      "outline": 7,
+      "kind": "figure",
+      "prompt": "A small cute white bunny girl named Lele with long upright ears that are pink inside, big round dark eyes, rosy cheeks, a knitted red scarf, standing upright on two feet with her paws relaxed.",
+      "seed": 44167
+    },
+    "star": {
+      "file": "art/star.webp",
+      "outline": 6,
+      "kind": "figure",
+      "prompt": "A small cute five-pointed golden star character with a gentle smiling face and rosy cheeks, softly glowing.",
+      "seed": 56613
+    },
+    "lantern": {
+      "file": "art/lantern.webp",
+      "outline": 6,
+      "kind": "figure",
+      "prompt": "A round red Chinese paper lantern with golden caps and a golden tassel, glowing warmly from inside, hanging from a short bamboo stick.",
+      "seed": 86074
+    },
+    "fireflies": {
+      "file": "art/fireflies.svg"
+    },
+    "owl": {
+      "file": "art/owl.webp",
+      "outline": 7,
+      "kind": "figure",
+      "prompt": "A fluffy round brown owl with big amber eyes and little ear tufts, perched on a short branch, friendly expression.",
+      "seed": 14240
+    },
+    "tree": {
+      "file": "art/tree.webp",
+      "outline": 7,
+      "kind": "figure",
+      "prompt": "A round, leafy dark green storybook tree with a sturdy brown trunk and one side branch.",
+      "seed": 39427
+    },
+    "mushroom": {
+      "file": "art/mushroom.webp",
+      "outline": 6,
+      "kind": "figure",
+      "prompt": "Two cute glowing mushrooms side by side, a tall one with a teal cap with white spots and a small one with a lilac cap.",
+      "seed": 89147
+    },
+    "flower": {
+      "file": "art/flower.webp",
+      "outline": 6,
+      "kind": "figure",
+      "prompt": "A small bunch of three garden flowers, pink, yellow and lavender, with green stems and leaves.",
+      "seed": 44624
+    },
+    "lily": {
+      "file": "art/lily.webp",
+      "outline": 6,
+      "kind": "figure",
+      "prompt": "A single green lily pad seen from directly above, round with one narrow notch, with a small pink lotus flower on it.",
+      "seed": 20690
+    },
+    "frog": {
+      "file": "art/frog.webp",
+      "outline": 6,
+      "kind": "figure",
+      "prompt": "A small cute green frog sitting and smiling, with big friendly eyes.",
+      "seed": 43283
+    },
+    "bed": {
+      "file": "art/bed.webp",
+      "outline": 7,
+      "kind": "figure",
+      "prompt": "A small wooden child's bed seen from the side, with a white pillow and a blue blanket covered in little yellow stars.",
+      "seed": 83707
+    }
   },
   "pages": [
     {
@@ -34,9 +141,35 @@
       "scene": {
         "back": "bg-bedroom",
         "layers": [
-          { "name": "bed", "art": "bed", "label": "小床", "x": -0.26, "z": -0.05, "width": 0.6, "tap": "bounce" },
-          { "name": "lele", "art": "lele", "label": "乐乐", "x": 0.16, "z": 0.22, "width": 0.34, "tap": "hop" },
-          { "name": "star", "art": "star", "label": "小星星", "x": 0.28, "y": 0.5, "z": -0.38, "width": 0.17, "float": true, "tap": "twinkle" }
+          {
+            "name": "bed",
+            "art": "bed",
+            "label": "小床",
+            "x": -0.22,
+            "z": -0.05,
+            "width": 0.5,
+            "tap": "bounce"
+          },
+          {
+            "name": "lele",
+            "art": "lele",
+            "label": "乐乐",
+            "x": 0.2,
+            "z": 0.22,
+            "width": 0.22,
+            "tap": "hop"
+          },
+          {
+            "name": "star",
+            "art": "star",
+            "label": "小星星",
+            "x": 0.28,
+            "y": 0.5,
+            "z": -0.38,
+            "width": 0.17,
+            "float": true,
+            "tap": "twinkle"
+          }
         ]
       }
     },
@@ -48,10 +181,47 @@
       "scene": {
         "back": "bg-garden",
         "layers": [
-          { "name": "flower", "art": "flower", "label": "花", "x": -0.3, "z": 0.05, "width": 0.44, "tap": "wiggle" },
-          { "name": "lele", "art": "lele", "label": "乐乐", "x": 0.02, "z": 0.24, "width": 0.34, "tap": "hop" },
-          { "name": "lantern", "art": "lantern", "label": "小灯笼", "x": 0.17, "y": 0.1, "z": 0.3, "width": 0.13, "float": true, "tap": "glow" },
-          { "name": "fireflies", "art": "fireflies", "label": "萤火虫", "x": 0.28, "y": 0.34, "z": -0.15, "width": 0.39, "float": true, "tap": "twinkle", "glow": true }
+          {
+            "name": "flower",
+            "art": "flower",
+            "label": "花",
+            "x": -0.3,
+            "z": 0.05,
+            "width": 0.34,
+            "tap": "wiggle"
+          },
+          {
+            "name": "lele",
+            "art": "lele",
+            "label": "乐乐",
+            "x": 0.0,
+            "z": 0.24,
+            "width": 0.22,
+            "tap": "hop"
+          },
+          {
+            "name": "lantern",
+            "art": "lantern",
+            "label": "小灯笼",
+            "x": 0.13,
+            "y": 0.12,
+            "z": 0.3,
+            "width": 0.09,
+            "float": true,
+            "tap": "glow"
+          },
+          {
+            "name": "fireflies",
+            "art": "fireflies",
+            "label": "萤火虫",
+            "x": 0.28,
+            "y": 0.34,
+            "z": -0.15,
+            "width": 0.39,
+            "float": true,
+            "tap": "twinkle",
+            "glow": true
+          }
         ]
       }
     },
@@ -63,11 +233,56 @@
       "scene": {
         "back": "bg-forest",
         "layers": [
-          { "name": "tree", "art": "tree", "label": "大树", "x": -0.28, "z": -0.22, "width": 0.6, "tap": "wiggle" },
-          { "name": "owl", "art": "owl", "label": "猫头鹰", "x": -0.24, "y": 0.36, "z": -0.1, "width": 0.22, "float": true, "tap": "hoot" },
-          { "name": "mushroom", "art": "mushroom", "label": "蘑菇", "x": 0.3, "z": 0.12, "width": 0.29, "tap": "glow", "glow": true },
-          { "name": "lele", "art": "lele", "label": "乐乐", "x": 0.06, "z": 0.26, "width": 0.33, "tap": "hop" },
-          { "name": "star", "art": "star", "label": "亮光", "x": 0.34, "y": 0.44, "z": -0.42, "width": 0.12, "float": true, "tap": "twinkle" }
+          {
+            "name": "tree",
+            "art": "tree",
+            "label": "大树",
+            "x": -0.28,
+            "z": -0.22,
+            "width": 0.55,
+            "tap": "wiggle"
+          },
+          {
+            "name": "owl",
+            "art": "owl",
+            "label": "猫头鹰",
+            "x": -0.24,
+            "y": 0.36,
+            "z": -0.1,
+            "width": 0.22,
+            "float": true,
+            "tap": "hoot"
+          },
+          {
+            "name": "mushroom",
+            "art": "mushroom",
+            "label": "蘑菇",
+            "x": 0.33,
+            "z": 0.06,
+            "width": 0.24,
+            "tap": "glow",
+            "glow": true
+          },
+          {
+            "name": "lele",
+            "art": "lele",
+            "label": "乐乐",
+            "x": 0.03,
+            "z": 0.28,
+            "width": 0.21,
+            "tap": "hop"
+          },
+          {
+            "name": "star",
+            "art": "star",
+            "label": "亮光",
+            "x": 0.34,
+            "y": 0.44,
+            "z": -0.42,
+            "width": 0.12,
+            "float": true,
+            "tap": "twinkle"
+          }
         ]
       }
     },
@@ -79,10 +294,45 @@
       "scene": {
         "back": "bg-pond",
         "layers": [
-          { "name": "lily", "art": "lily", "label": "荷叶", "x": 0.04, "z": 0.02, "width": 0.55, "flat": true, "tap": "wiggle" },
-          { "name": "star", "art": "star", "label": "小星星", "x": 0.04, "y": 0.02, "z": 0.02, "width": 0.17, "tap": "glow" },
-          { "name": "frog", "art": "frog", "label": "青蛙", "x": -0.32, "z": 0.24, "width": 0.23, "tap": "hop", "sound": "ribbit" },
-          { "name": "lele", "art": "lele", "label": "乐乐", "x": 0.32, "z": 0.3, "width": 0.31, "tap": "hop" }
+          {
+            "name": "lily",
+            "art": "lily",
+            "label": "荷叶",
+            "x": 0.04,
+            "z": 0.02,
+            "width": 0.5,
+            "flat": true,
+            "tap": "wiggle"
+          },
+          {
+            "name": "star",
+            "art": "star",
+            "label": "小星星",
+            "x": 0.04,
+            "y": 0.02,
+            "z": 0.02,
+            "width": 0.15,
+            "tap": "glow"
+          },
+          {
+            "name": "frog",
+            "art": "frog",
+            "label": "青蛙",
+            "x": -0.32,
+            "z": 0.24,
+            "width": 0.2,
+            "tap": "hop",
+            "sound": "ribbit"
+          },
+          {
+            "name": "lele",
+            "art": "lele",
+            "label": "乐乐",
+            "x": 0.33,
+            "z": 0.3,
+            "width": 0.21,
+            "tap": "hop"
+          }
         ]
       }
     },
@@ -94,8 +344,26 @@
       "scene": {
         "back": "bg-hill",
         "layers": [
-          { "name": "lele", "art": "lele", "label": "乐乐", "x": -0.08, "z": 0.2, "width": 0.36, "tap": "jump" },
-          { "name": "star", "art": "star", "label": "星星", "x": 0.1, "y": 0.28, "z": 0.12, "width": 0.17, "float": true, "tap": "rise" }
+          {
+            "name": "lele",
+            "art": "lele",
+            "label": "乐乐",
+            "x": -0.08,
+            "z": 0.2,
+            "width": 0.24,
+            "tap": "jump"
+          },
+          {
+            "name": "star",
+            "art": "star",
+            "label": "星星",
+            "x": 0.1,
+            "y": 0.28,
+            "z": 0.12,
+            "width": 0.17,
+            "float": true,
+            "tap": "rise"
+          }
         ]
       }
     },
@@ -107,9 +375,35 @@
       "scene": {
         "back": "bg-bedroom",
         "layers": [
-          { "name": "bed", "art": "bed", "label": "小床", "x": -0.14, "z": 0.02, "width": 0.65, "tap": "bounce" },
-          { "name": "lele", "art": "lele", "label": "乐乐", "x": 0.26, "z": 0.26, "width": 0.29, "tap": "sleep" },
-          { "name": "star", "art": "star", "label": "星星", "x": 0.02, "y": 0.52, "z": -0.4, "width": 0.18, "float": true, "tap": "twinkle" }
+          {
+            "name": "bed",
+            "art": "bed",
+            "label": "小床",
+            "x": -0.14,
+            "z": 0.02,
+            "width": 0.55,
+            "tap": "bounce"
+          },
+          {
+            "name": "lele",
+            "art": "lele",
+            "label": "乐乐",
+            "x": 0.26,
+            "z": 0.26,
+            "width": 0.2,
+            "tap": "sleep"
+          },
+          {
+            "name": "star",
+            "art": "star",
+            "label": "星星",
+            "x": 0.02,
+            "y": 0.52,
+            "z": -0.4,
+            "width": 0.18,
+            "float": true,
+            "tap": "twinkle"
+          }
         ]
       }
     }
@@ -121,9 +415,38 @@
     "scene": {
       "back": "bg-hill",
       "layers": [
-        { "name": "lele", "art": "lele", "label": "乐乐", "x": -0.16, "z": 0.2, "width": 0.34, "tap": "hop" },
-        { "name": "fireflies", "art": "fireflies", "label": "萤火虫", "x": 0.26, "y": 0.2, "z": 0.05, "width": 0.34, "float": true, "tap": "twinkle", "glow": true },
-        { "name": "star", "art": "star", "label": "星星", "x": 0.18, "y": 0.5, "z": -0.4, "width": 0.16, "float": true, "tap": "twinkle" }
+        {
+          "name": "lele",
+          "art": "lele",
+          "label": "乐乐",
+          "x": -0.16,
+          "z": 0.2,
+          "width": 0.22,
+          "tap": "hop"
+        },
+        {
+          "name": "fireflies",
+          "art": "fireflies",
+          "label": "萤火虫",
+          "x": 0.26,
+          "y": 0.2,
+          "z": 0.05,
+          "width": 0.34,
+          "float": true,
+          "tap": "twinkle",
+          "glow": true
+        },
+        {
+          "name": "star",
+          "art": "star",
+          "label": "星星",
+          "x": 0.18,
+          "y": 0.5,
+          "z": -0.4,
+          "width": 0.16,
+          "float": true,
+          "tap": "twinkle"
+        }
       ]
     }
   }

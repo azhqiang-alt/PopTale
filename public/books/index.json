@@ -1,9 +1,35 @@
 {
   "books": [
-    { "id": "lele-star", "title": "乐乐送星星回家", "status": "ready", "cover": "books/lele-star/art/cover.svg", "color": "#2b3a78" },
-    { "id": "soon-whale", "title": "云朵里的小鲸鱼", "status": "soon", "color": "#2f7a8c" },
-    { "id": "soon-kite", "title": "追风筝的下午", "status": "soon", "color": "#c0643a" },
-    { "id": "soon-panda", "title": "熊猫的新年", "status": "soon", "color": "#a33b4f" },
-    { "id": "soon-boat", "title": "纸船去旅行", "status": "soon", "color": "#5a6e2f" }
+    {
+      "id": "lele-star",
+      "title": "乐乐送星星回家",
+      "status": "ready",
+      "cover": "books/lele-star/art/cover.webp",
+      "color": "#2b3a78"
+    },
+    {
+      "id": "soon-whale",
+      "title": "云朵里的小鲸鱼",
+      "status": "soon",
+      "color": "#2f7a8c"
+    },
+    {
+      "id": "soon-kite",
+      "title": "追风筝的下午",
+      "status": "soon",
+      "color": "#c0643a"
+    },
+    {
+      "id": "soon-panda",
+      "title": "熊猫的新年",
+      "status": "soon",
+      "color": "#a33b4f"
+    },
+    {
+      "id": "soon-boat",
+      "title": "纸船去旅行",
+      "status": "soon",
+      "color": "#5a6e2f"
+    }
   ]
 }

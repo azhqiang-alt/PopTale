@@ -6,17 +6,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Node is managed with nvm (`.nvmrc`), Python with pyenv (`.python-version`). The Python tools use only the standard library, and they need `ffmpeg` on PATH.
+Node is managed with nvm (`.nvmrc`), Python with pyenv (`.python-version`). There are three Python environments:
+- **system python3** (stdlib only) runs `tools/build_voice.py`.
+- **`.venv/`** in the project (mflux, rembg, pillow) runs `tools/gen_art.py`.
+- **`~/.venvs/mlx-audio`** (the user's own environment, with the Qwen3-TTS weights in the HF cache) runs `tools/qwen_tts_worker.py`. `build_voice.py` starts the worker itself; do not install into this environment.
+
+ffmpeg must be on PATH. The shell exports a SOCKS proxy, so the scripts drop the `*_proxy` variables when they run local models.
 
 ```bash
 npm run dev          # Vite dev server (--host, so phones on the LAN can open it)
 npm run build        # static build into dist/ (base "./", deployable under any path)
-npm run voice -- <book-id>                    # build narration with macOS `say` (voice from story.json)
-npm run voice -- <book-id> --provider openai  # same via OpenAI TTS (needs OPENAI_API_KEY; untested)
-npm run art          # regenerate the placeholder SVG art for lele-star
+
+# narration (provider/voice/instruct come from story.json "narrator")
+python3 tools/build_voice.py <book>                         # whole book -> public/books/<book>/voice/
+python3 tools/build_voice.py <book> --sample 1 --voice serena   # audition: page 1 into tools/.cache/samples/
+
+# illustrations (Z-Image Turbo via mflux; prompts in story.json "artStyle" + art[id].prompt/kind)
+.venv/bin/python tools/gen_art.py <book> lele star --count 4   # candidates + sheet.png in tools/.cache/art/<book>/<id>/
+.venv/bin/python tools/gen_art.py <book> --pick lele=1042      # cut out / shape, write art/<id>.webp, update story.json
+.venv/bin/python tools/gen_art.py --save-model                 # once: keep an 8-bit copy in tools/.cache/models/
+
+npm run art          # regenerate the placeholder SVG art (the fallback before real art exists)
 ```
 
-There are no tests or linter yet. To check a change, run the app. A hidden or background tab pauses `requestAnimationFrame`, and with it every animation and tween. When you drive the app from browser automation, replace `requestAnimationFrame` with a `setTimeout` shim.
+There are no tests or linter yet. To check a change, run the app. A hidden or background tab pauses `requestAnimationFrame`, and with it every animation and tween. When you drive the app from browser automation, replace `requestAnimationFrame` with a `setTimeout` shim. Right after a navigation, the automation's first click can be lost; run a page script first.
 
 ## Architecture
 
@@ -28,11 +41,11 @@ There are no tests or linter yet. To check a change, run the app. A hidden or ba
 **Text format (shared contract).** Page text is split into tokens on spaces; the spaces are not displayed. A token such as `{小星星:star/fall}` links to the scene object named `star` and plays the action `fall` on it. `src/tokens.js` and `tools/build_voice.py` must tokenize identically, because `timings.json` holds exactly one `{start, end}` entry per token. If the counts differ, the narrator falls back to estimated timings.
 
 **Narration pipeline** (`tools/build_voice.py`):
-1. Split the page into phrases at punctuation.
-2. Synthesize each phrase separately and trim its silence.
-3. Join the phrases with fixed pauses.
+1. Synthesize each sentence separately (for natural intonation), trim its silence, and join the sentences with fixed pauses. Sentence boundaries are therefore exact.
+2. Inside a sentence, find the comma pauses in the energy envelope: pick the quiet gap closest to where each phrase should end by character count.
+3. Inside a phrase, share the voiced time out by character count (Chinese has one syllable per character) and snap word boundaries onto pauses.
 
-Phrase boundaries are therefore exact. Within a phrase, time is shared out by character count, since Chinese has one syllable per character. There is no speech recognizer. Synthesized phrases are cached in `tools/.cache/`.
+There is no speech recognizer. Clips are cached in `tools/.cache/voice/`, keyed by provider settings and text.
 
 **Runtime flow** (`src/main.js`): `state.view` goes loading → shelf → picking → book.
 - **Picking.** The shelf copy of the book (`shelf.js`) flies to the table while `loadBook` runs. Then the real `Book3D` replaces it. `state.pick` is bumped when a pick is abandoned, so a late load disposes itself.
@@ -46,6 +59,10 @@ Phrase boundaries are therefore exact. Within a phrase, time is shared out by ch
 **Book geometry** (`book3d.js`). The spine is at x=0 and the top of the page is at -z. Page surfaces are canvas textures from `textures.pageTexture`. The left page's spine is on the texture's right edge, so the turning leaf's back face uses a mirrored clone. The front cover is hinged at the spine and swings π to open.
 
 **Art loading** (`textures.loadArt`). SVG and PNG files are drawn to a canvas, optionally with a white cut-paper outline. The alpha channel is kept on `texture.userData` so taps on transparent pixels fall through (`opaqueAt`).
+
+## Direction
+
+Planned: a set of preset books, then users uploading their own e-books and writing their own story collections. A book will then have to be produced from plain text by a pipeline: split into pages, link words to scene objects, write art prompts, paint and voice. Keep `story.json` the only contract between the tools and the reader. Keep the `tools/` scripts runnable without interaction, so a backend job can drive them later.
 
 ## Constraints
 

@@ -1,21 +1,30 @@
 """Builds a book's narration: one mp3 per page plus voice/timings.json (start/end per token).
 
-Each page is split into phrases at punctuation. Every phrase is synthesized on its own, its
-leading and trailing silence trimmed, and the phrases are joined with fixed pauses. The phrase
-boundaries are therefore exact; inside a phrase the time is shared out by character count
-(Chinese is syllable-timed, one character per syllable), which lands the highlight on the
-right word without a speech recognizer.
+Each sentence is synthesized on its own (natural intonation) and its outer silence trimmed;
+sentences are joined with fixed pauses, so sentence boundaries are exact. Inside a sentence,
+the pauses at commas are found in the audio (the quiet gaps nearest to where the phrases
+should end), and inside a phrase the time is shared out by character count: Chinese is
+syllable-timed, one character per syllable. No speech recognizer is needed.
 
-    python3 tools/build_voice.py lele-star                  # macOS `say` voice from story.json
-    python3 tools/build_voice.py lele-star --provider openai  # needs OPENAI_API_KEY
+    python3 tools/build_voice.py lele-star                    # provider from story.json narrator
+    python3 tools/build_voice.py lele-star --provider say     # macOS system voice
+    python3 tools/build_voice.py lele-star --voice serena     # try another voice
+    python3 tools/build_voice.py lele-star --sample 1         # only page 1, to audition a voice
+
+Providers:
+  qwen    Qwen3-TTS through mlx-audio, run by tools/qwen_tts_worker.py in the mlx-audio
+          environment (MLX_AUDIO_PYTHON, default ~/.venvs/mlx-audio/bin/python). Offline.
+  say     macOS `say`.
+  openai  OpenAI speech API (OPENAI_API_KEY). Untested.
 
 Needs ffmpeg. Output: public/books/<id>/voice/page-N.mp3, title.mp3, timings.json.
-Page N is 1-based; the last page is the end card.
+Page N is 1-based; the last page is the end card. Clips are cached in tools/.cache/voice.
 """
 import argparse
 import array
 import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -27,13 +36,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = ROOT / "tools/.cache/voice"
+SAMPLES = ROOT / "tools/.cache/samples"
 RATE = 44100
 LINK = re.compile(r"^([^{]*)\{([^}:]+)(?::([^}]+))?\}(.*)$")
 PUNCT = re.compile(r"[，。！？：；、,.!?:;“”\"'‘’（）()…—\s]")
-STOP = re.compile(r"[。！？!?.]")
-PHRASE_END = re.compile(r"[，。！？：；、,.!?:;]")
-LEAD, TAIL = 0.25, 0.6
-PAUSE = {"short": 0.28, "stop": 0.55}
+CLOSERS = "”\"’'）)"
+STOP = re.compile(r"[。！？!?.…]$")
+PHRASE_END = re.compile(r"[，。！？：；、,.!?:;…]$")
+LEAD, TAIL, SENTENCE_GAP = 0.3, 0.7, 0.45
+HOP = 0.01  # analysis frame, seconds
+QWEN_MODEL = "mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-6bit"
 
 
 def tokens(text):
@@ -46,109 +58,270 @@ def tokens(text):
 
 
 def weight(token):
-    return max(0.0, float(len(PUNCT.sub("", token))))
+    return float(len(PUNCT.sub("", token)))
 
 
-def phrases(toks):
-    """Group token indices into phrases that end at punctuation."""
+def group(indices, toks, pattern):
+    """Split token indices after tokens ending with `pattern` punctuation."""
     groups, cur = [], []
-    for i, t in enumerate(toks):
+    for i in indices:
         cur.append(i)
-        if PHRASE_END.search(t.rstrip("”\"’'")[-1:] or "") or i == len(toks) - 1:
+        if pattern.search(toks[i].rstrip(CLOSERS)):
             groups.append(cur)
             cur = []
-    return [g for g in groups if sum(weight(toks[i]) for i in g) > 0] or [list(range(len(toks)))]
+    if cur:
+        groups.append(cur)
+    return groups
 
 
-def run(cmd):
-    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+def run(cmd, **kw):
+    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, **kw)
 
 
-def to_pcm(src, trim=True):
-    """Decode any audio file to mono float samples at RATE, optionally trimming silence at both ends."""
-    flt = "silenceremove=start_periods=1:start_threshold=-48dB,areverse,silenceremove=start_periods=1:start_threshold=-48dB,areverse" if trim else "anull"
-    raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", str(src), "-af", flt, "-ac", "1", "-ar", str(RATE), "-f", "f32le", "-"],
-                         check=True, capture_output=True).stdout
+def decode(src):
+    """Any audio file -> mono float samples at RATE, with the silence at both ends trimmed."""
+    trim = "silenceremove=start_periods=1:start_threshold=-45dB"
+    raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", str(src), "-af", f"{trim},areverse,{trim},areverse",
+                          "-ac", "1", "-ar", str(RATE), "-f", "f32le", "-"], check=True, capture_output=True).stdout
     samples = array.array("f")
     samples.frombytes(raw)
     return samples
 
 
+def offline_env():
+    """The local model needs no network; drop proxies (a SOCKS proxy breaks httpx imports)."""
+    env = {k: v for k, v in os.environ.items() if not k.lower().endswith("_proxy")}
+    env["HF_HUB_OFFLINE"] = "1"
+    return env
+
+
+# ---------- providers: synth_many([(text, path)]) writes one audio file per text ----------
+
+
 class Say:
+    ext = ".aiff"
+
     def __init__(self, voice, rate):
         self.voice, self.rate = voice, rate
 
     def key(self):
         return f"say:{self.voice}:{self.rate}"
 
-    def synth(self, text, out):
-        run(["say", "-v", self.voice, "-r", str(self.rate), "-o", str(Path(out).with_suffix(".aiff")), text])
-        return Path(out).with_suffix(".aiff")
+    def synth_many(self, items):
+        for text, out in items:
+            run(["say", "-v", self.voice, "-r", str(self.rate), "-o", str(out), text])
+
+
+class Qwen:
+    ext = ".wav"
+
+    def __init__(self, voice, instruct, speed):
+        self.voice, self.instruct, self.speed = voice, instruct, speed
+        self.python = os.environ.get("MLX_AUDIO_PYTHON", str(Path.home() / ".venvs/mlx-audio/bin/python"))
+
+    def key(self):
+        return f"qwen:{QWEN_MODEL}:{self.voice}:{self.speed}:{self.instruct}"
+
+    def synth_many(self, items):
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as f:
+            json.dump({"model": QWEN_MODEL, "voice": self.voice, "instruct": self.instruct, "lang": "zh", "speed": self.speed,
+                       "items": [{"text": t, "out": str(o)} for t, o in items]}, f, ensure_ascii=False)
+        try:
+            subprocess.run([self.python, str(ROOT / "tools/qwen_tts_worker.py"), f.name], check=True, env=offline_env())
+        finally:
+            os.unlink(f.name)
 
 
 class OpenAI:
-    def __init__(self, voice, instructions):
-        self.voice, self.instructions = voice, instructions
-        self.api_key = os.environ.get("OPENAI_API_KEY")
-        if not self.api_key:
-            sys.exit("OPENAI_API_KEY is not set")
+    ext = ".wav"
+
+    def __init__(self, voice, instruct):
+        self.voice, self.instruct = voice, instruct
+        self.api_key = os.environ.get("OPENAI_API_KEY") or sys.exit("OPENAI_API_KEY is not set")
 
     def key(self):
-        return f"openai:{self.voice}:{self.instructions}"
+        return f"openai:{self.voice}:{self.instruct}"
 
-    def synth(self, text, out):
-        body = json.dumps({"model": "gpt-4o-mini-tts", "voice": self.voice, "input": text,
-                           "instructions": self.instructions, "response_format": "wav"}).encode()
-        req = urllib.request.Request("https://api.openai.com/v1/audio/speech", data=body,
-                                     headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=120) as res:
-            Path(out).write_bytes(res.read())
-        return Path(out)
+    def synth_many(self, items):
+        for text, out in items:
+            body = json.dumps({"model": "gpt-4o-mini-tts", "voice": self.voice, "input": text,
+                               "instructions": self.instruct, "response_format": "wav"}).encode()
+            req = urllib.request.Request("https://api.openai.com/v1/audio/speech", data=body,
+                                         headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=120) as res:
+                Path(out).write_bytes(res.read())
 
 
-def phrase_audio(provider, text, tmp):
-    """Trimmed samples for one phrase, cached by provider settings and text."""
-    CACHE.mkdir(parents=True, exist_ok=True)
-    digest = hashlib.sha1(f"{provider.key()}|{text}".encode()).hexdigest()[:16]
-    cached = CACHE / f"{digest}.f32"
-    if cached.exists():
+class Clips:
+    """Trimmed audio per sentence, cached on disk by provider settings and text."""
+
+    def __init__(self, provider, tmp):
+        self.provider, self.tmp = provider, Path(tmp)
+        CACHE.mkdir(parents=True, exist_ok=True)
+
+    def path(self, text):
+        return CACHE / (hashlib.sha1(f"{self.provider.key()}|{text}".encode()).hexdigest()[:20] + ".f32")
+
+    def prefetch(self, texts):
+        missing = sorted({t for t in texts if PUNCT.sub("", t) and not self.path(t).exists()})
+        if not missing:
+            return
+        print(f"synthesizing {len(missing)} sentences…", flush=True)
+        items = [(t, self.tmp / f"clip{i}{self.provider.ext}") for i, t in enumerate(missing)]
+        self.provider.synth_many(items)
+        for text, out in items:
+            self.path(text).write_bytes(decode(out).tobytes())
+
+    def get(self, text):
         samples = array.array("f")
-        samples.frombytes(cached.read_bytes())
+        samples.frombytes(self.path(text).read_bytes())
         return samples
-    src = Path(tmp) / f"{digest}.wav"
-    samples = to_pcm(provider.synth(text, src))
-    cached.write_bytes(samples.tobytes())
-    return samples
 
 
-def build_page(provider, toks, tmp):
+# ---------- alignment inside a sentence ----------
+
+
+def envelope(clip):
+    n = int(RATE * HOP)
+    return [math.sqrt(sum(s * s for s in clip[i:i + n]) / n) for i in range(0, len(clip) - n + 1, n)]
+
+
+def quiet_gaps(env, min_len=0.05):
+    """Runs of low energy inside the clip, in time order: ([(start, end) seconds], threshold)."""
+    if len(env) < 10:
+        return [], 0.0
+    ordered = sorted(env)
+    floor, peak = ordered[len(env) // 10], ordered[int(len(env) * 0.98)]
+    thr = floor + (peak - floor) * 0.12
+    gaps, start = [], None
+    for f, v in enumerate(env):
+        if v < thr and start is None:
+            start = f
+        elif v >= thr and start is not None:
+            if start > 0 and (f - start) * HOP >= min_len:
+                gaps.append((start * HOP, f * HOP))
+            start = None
+    return gaps, thr
+
+
+def phrase_spans(env, weights, dur):
+    """Where each phrase of a sentence is spoken: pick, in order, the quiet gap that is long and
+    close to where the phrase should end by character count. Falls back to proportional spans."""
+    n = len(weights)
+    total = sum(weights) or 1.0
+    expected, acc = [], 0.0
+    for w in weights[:-1]:
+        acc += w
+        expected.append(acc / total * dur)
+    gaps, _ = quiet_gaps(env)
+    chosen, last = [], 0.0
+    for k, exp in enumerate(expected):
+        room = n - 2 - k  # boundaries still to place after this one
+        cands = [g for j, g in enumerate(gaps) if g[0] > last + 0.12 and len(gaps) - j - 1 >= room]
+        if not cands:
+            chosen = None
+            break
+        best = max(cands, key=lambda g: (g[1] - g[0]) - 0.3 * abs((g[0] + g[1]) / 2 - exp))
+        chosen.append(best)
+        last = best[1]
+    if chosen is None:
+        cuts = [(e, e) for e in expected]
+    else:
+        cuts = chosen
+    edges = [0.0] + [c for g in cuts for c in g] + [dur]
+    return [(edges[2 * i], edges[2 * i + 1]) for i in range(n)]
+
+
+def voiced_segments(env, thr, start, end, min_gap=0.12):
+    """The stretches of sound in [start, end], split at pauses of at least min_gap."""
+    a, b = int(start / HOP), min(len(env), max(int(start / HOP) + 1, int(end / HOP)))
+    segs, seg_start, quiet = [], None, 0
+    for f in range(a, b):
+        if env[f] >= thr:
+            if seg_start is None:
+                seg_start = f
+            elif quiet * HOP >= min_gap:
+                segs.append((seg_start * HOP, (f - quiet) * HOP))
+                seg_start = f
+            quiet = 0
+        elif seg_start is not None:
+            quiet += 1
+    if seg_start is not None:
+        segs.append((seg_start * HOP, (b - quiet) * HOP))
+    return segs or [(start, end)]
+
+
+def spread_voiced(segs, weights, snap=0.08):
+    """Share the voiced time among tokens by weight. A token boundary that lands within `snap`
+    seconds of a pause is moved onto it, so words start after a pause, not in its middle."""
+    total_voiced = sum(e - s for s, e in segs)
+    total = sum(weights) or 1.0
+    edges = [0.0]
+    for w in weights:
+        edges.append(edges[-1] + total_voiced * w / total)
+
+    def at(v, prefer_next):
+        acc = 0.0
+        for k, (s, e) in enumerate(segs):
+            length = e - s
+            if v <= acc + length + 1e-9:
+                inside = v - acc
+                if prefer_next and length - inside < snap and k + 1 < len(segs):
+                    return segs[k + 1][0]
+                if not prefer_next and inside < snap and k > 0:
+                    return segs[k - 1][1]
+                return s + inside
+            acc += length
+        return segs[-1][1]
+
+    return [(at(edges[i], True), max(at(edges[i], True), at(edges[i + 1], False))) for i in range(len(weights))]
+
+
+def align_sentence(clip, toks, idxs):
+    """{token index: (start, end)} within the clip."""
+    dur = len(clip) / RATE
+    env = envelope(clip)
+    _, thr = quiet_gaps(env)
+    phrases = group(idxs, toks, PHRASE_END)
+    spans = phrase_spans(env, [max(0.5, sum(weight(toks[i]) for i in p)) for p in phrases], dur)
+    out = {}
+    for phrase, (s, e) in zip(phrases, spans):
+        segs = voiced_segments(env, thr, s, e)
+        for i, span in zip(phrase, spread_voiced(segs, [weight(toks[i]) for i in phrase])):
+            out[i] = span
+    return out
+
+
+# ---------- pages ----------
+
+
+def sentences(toks):
+    return group(range(len(toks)), toks, STOP)
+
+
+def sentence_text(toks, idxs):
+    return "".join(toks[i] for i in idxs)
+
+
+def build_page(clips, toks):
     """Returns (samples, timings) for one page."""
-    audio = array.array("f", [0.0] * int(LEAD * RATE))
+    audio = array.array("f", bytes(4 * int(LEAD * RATE)))
     timings = [None] * len(toks)
-    groups = phrases(toks)
-    for gi, group in enumerate(groups):
-        text = "".join(toks[i] for i in group)
-        spoken = PUNCT.sub("", text)
-        clip = phrase_audio(provider, text, tmp) if spoken else array.array("f")
-        start = len(audio) / RATE
-        dur = len(clip) / RATE
-        total = sum(weight(toks[i]) for i in group) or 1.0
-        t = start
-        for i in group:
-            d = dur * weight(toks[i]) / total
-            timings[i] = {"start": round(t, 3), "end": round(t + d, 3)}
-            t += d
+    groups = sentences(toks)
+    for si, idxs in enumerate(groups):
+        text = sentence_text(toks, idxs)
+        offset = len(audio) / RATE
+        if not PUNCT.sub("", text):
+            for i in idxs:
+                timings[i] = {"start": round(offset, 3), "end": round(offset, 3)}
+            continue
+        clip = clips.get(text)
+        for i, (s, e) in align_sentence(clip, toks, idxs).items():
+            timings[i] = {"start": round(offset + s, 3), "end": round(offset + e, 3)}
         audio.extend(clip)
-        last = toks[group[-1]]
-        if gi < len(groups) - 1:
-            gap = PAUSE["stop"] if STOP.search(last) else PAUSE["short"]
-            audio.extend([0.0] * int(gap * RATE))
-    audio.extend([0.0] * int(TAIL * RATE))
-    # tokens that belong to no spoken phrase (stray punctuation) sit at the end of the one before
-    for i, tm in enumerate(timings):
-        if tm is None:
-            prev = timings[i - 1] if i else {"start": 0.0, "end": 0.0}
-            timings[i] = {"start": prev["end"], "end": prev["end"]}
+        if si < len(groups) - 1:
+            audio.extend(array.array("f", bytes(4 * int(SENTENCE_GAP * RATE))))
+    audio.extend(array.array("f", bytes(4 * int(TAIL * RATE))))
     return audio, timings
 
 
@@ -158,43 +331,59 @@ def write_mp3(samples, out, tmp):
         w.setnchannels(1)
         w.setsampwidth(2)
         w.setframerate(RATE)
-        pcm = array.array("h", (max(-32767, min(32767, int(s * 32767))) for s in samples))
-        w.writeframes(pcm.tobytes())
+        w.writeframes(array.array("h", (max(-32767, min(32767, int(s * 32767))) for s in samples)).tobytes())
     run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(wav), "-af", "loudnorm=I=-18:TP=-2", "-ar", str(RATE),
          "-ac", "1", "-codec:a", "libmp3lame", "-b:a", "96k", str(out)])
+
+
+def make_provider(name, n, args):
+    if name == "say":
+        say = n.get("say", {})
+        return Say(args.voice or say.get("voice", "Tingting"), args.rate or say.get("rate", 150))
+    if name == "qwen":
+        return Qwen(args.voice or n.get("voice", "vivian"), n.get("instruct"), args.speed or n.get("speed", 1.0))
+    return OpenAI(args.voice or n.get("openaiVoice", "nova"), n.get("instruct"))
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("book")
-    ap.add_argument("--provider", choices=["say", "openai"], default="say")
+    ap.add_argument("--provider", choices=["qwen", "say", "openai"])
     ap.add_argument("--voice", help="override the voice in story.json")
-    ap.add_argument("--rate", type=int, help="words per minute for `say` (story.json narrator.rate)")
+    ap.add_argument("--rate", type=int, help="words per minute for `say`")
+    ap.add_argument("--speed", type=float, help="speed for qwen (1.0 = normal)")
+    ap.add_argument("--sample", type=int, help="only build page N into tools/.cache/samples (does not touch the book)")
     args = ap.parse_args()
 
     base = ROOT / "public/books" / args.book
     story = json.loads((base / "story.json").read_text(encoding="utf-8"))
     n = story.get("narrator", {})
-    if args.provider == "say":
-        provider = Say(args.voice or n.get("voice", "Tingting"), args.rate or n.get("rate", 150))
-    else:
-        provider = OpenAI(args.voice or n.get("openaiVoice", "nova"),
-                          n.get("instructions", "用温柔、缓慢、充满好奇的语气，给小朋友讲睡前故事。"))
+    provider = make_provider(args.provider or n.get("provider", "say"), n, args)
+    pages = [tokens(p["text"]) for p in story["pages"]] + [tokens(story["end"]["text"])]
 
-    texts = [p["text"] for p in story["pages"]] + [story["end"]["text"]]
-    out_dir = base / "voice"
-    out_dir.mkdir(exist_ok=True)
-    all_timings = {}
     with tempfile.TemporaryDirectory() as tmp:
-        for i, text in enumerate(texts, 1):
-            toks = tokens(text)
-            samples, timings = build_page(provider, toks, tmp)
+        clips = Clips(provider, tmp)
+        if args.sample:
+            toks = pages[args.sample - 1]
+            clips.prefetch([sentence_text(toks, s) for s in sentences(toks)])
+            samples, _ = build_page(clips, toks)
+            SAMPLES.mkdir(parents=True, exist_ok=True)
+            out = SAMPLES / f"{provider.key().split(':')[0]}-{getattr(provider, 'voice', '')}-page-{args.sample}.mp3"
+            write_mp3(samples, out, tmp)
+            print(out)
+            return
+        clips.prefetch([sentence_text(t, s) for t in pages for s in sentences(t)] + [story["title"]])
+        out_dir = base / "voice"
+        out_dir.mkdir(exist_ok=True)
+        all_timings = {}
+        for i, toks in enumerate(pages, 1):
+            samples, timings = build_page(clips, toks)
             write_mp3(samples, out_dir / f"page-{i}.mp3", tmp)
             all_timings[f"page-{i}"] = timings
             print(f"page-{i}: {len(toks)} tokens, {len(samples) / RATE:.1f}s")
-        title, _ = build_page(provider, [story["title"]], tmp)
+        title, _ = build_page(clips, [story["title"]])
         write_mp3(title, out_dir / "title.mp3", tmp)
-    (out_dir / "timings.json").write_text(json.dumps(all_timings, ensure_ascii=False, indent=1), encoding="utf-8")
+    (out_dir / "timings.json").write_text(json.dumps(all_timings, ensure_ascii=False), encoding="utf-8")
     print(f"wrote {out_dir}")
 
 

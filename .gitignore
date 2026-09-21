@@ -2,3 +2,5 @@ node_modules/
 dist/
 tools/.cache/
 .DS_Store
+.venv/
+__pycache__/

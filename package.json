@@ -1,0 +1,18 @@
+{
+  "name": "firefly-picture-books",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "voice": "python3 tools/build_voice.py",
+    "art": "python3 tools/placeholder_art.py"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "vite": "^6.4.3"
+  }
+}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1a1838" />
+    <title>萤火绘本</title>
+  </head>
+  <body data-view="loading">
+    <canvas id="stage"></canvas>
+
+    <div id="loading" class="loading">
+      <div class="loading-card">
+        <div class="loading-title">萤火绘本</div>
+        <div class="bar"><i></i></div>
+        <div class="loading-copy">正在准备书架…</div>
+      </div>
+    </div>
+
+    <header id="shelf-ui" class="shelf-ui" hidden>
+      <h1>萤火绘本</h1>
+      <p>点一本书，听一个故事</p>
+    </header>
+    <div id="shelf-label" class="shelf-label" hidden></div>
+
+    <section id="book-card" class="book-card" hidden>
+      <h2 id="book-title"></h2>
+      <p id="book-blurb"></p>
+      <div class="book-progress"><div class="bar"><i></i></div><span id="book-loading"></span></div>
+      <div class="book-actions">
+        <button id="btn-open" class="pill primary" hidden>打开书</button>
+        <button id="btn-back-shelf" class="pill">回到书架</button>
+      </div>
+    </section>
+
+    <nav id="reader-bar" class="reader-bar" hidden>
+      <button id="btn-home" class="icon-btn" aria-label="回到书架">
+        <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h13V9.5" /></svg>
+      </button>
+      <div id="page-dots" class="page-dots"></div>
+      <div class="star-count" title="读完一页得一颗星"><span aria-hidden="true">★</span><b id="star-count">0</b></div>
+      <button id="btn-sound" class="icon-btn" aria-label="静音">
+        <svg viewBox="0 0 24 24"><path d="M4 9.5h4L13 5v14l-5-4.5H4z" /><path class="waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" /><path class="cross" d="m16 9 6 6m0-6-6 6" /></svg>
+      </button>
+      <button id="btn-settings" class="icon-btn" aria-label="设置">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" /><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" /></svg>
+      </button>
+    </nav>
+
+    <section id="text-panel" class="text-panel" hidden>
+      <div class="text-inner">
+        <div id="page-eyebrow" class="eyebrow"></div>
+        <h2 id="page-heading"></h2>
+        <p id="page-words" class="words" lang="zh-CN"></p>
+        <p id="page-hint" class="hint"></p>
+        <button id="read-done" class="pill done" hidden>★ 我读完了</button>
+        <div id="end-actions" class="end-actions" hidden>
+          <button id="btn-restart" class="pill primary">再读一遍</button>
+          <button id="btn-end-shelf" class="pill">回到书架</button>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="btn-prev" class="round" aria-label="上一页"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" /></svg></button>
+        <button id="btn-play" class="round big" aria-label="朗读" data-state="idle">
+          <svg class="play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+          <svg class="pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" /></svg>
+        </button>
+        <button id="btn-next" class="round" aria-label="下一页"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg></button>
+      </div>
+    </section>
+
+    <div id="word-zoom" class="word-zoom" hidden></div>
+    <div id="tip" class="tip" hidden></div>
+    <div id="toast" class="toast" role="status" hidden></div>
+
+    <dialog id="settings" class="settings">
+      <h2>设置</h2>
+      <div class="row"><span>读书方式</span><span class="seg"><button data-mode="listen">听故事</button><button data-mode="self">自己读</button></span></div>
+      <label class="row"><span>读完自动翻页</span><input type="checkbox" id="set-auto" /></label>
+      <label class="row"><span>大字</span><input type="checkbox" id="set-large" /></label>
+      <label class="row"><span>背景音乐</span><input type="checkbox" id="set-music" /></label>
+      <p class="keys">快捷键：空格 朗读/暂停 · ← → 翻页 · M 静音 · Esc 回到书架</p>
+      <form method="dialog"><button class="pill primary">好的</button></form>
+    </dialog>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,130 @@
+{
+  "id": "lele-star",
+  "title": "乐乐送星星回家",
+  "subtitle": "一只小兔和一颗迷路的星星",
+  "blurb": "一颗小星星从天上掉了下来。小兔乐乐提着灯笼，穿过花园和森林，要把它送回家。",
+  "language": "zh",
+  "cover": "art/cover.svg",
+  "colors": { "cloth": "#2b3a78", "endpaper": "#f3c86b" },
+  "narrator": { "voice": "Tingting", "rate": 150 },
+  "art": {
+    "bg-bedroom": { "file": "art/bg-bedroom.svg" },
+    "bg-garden": { "file": "art/bg-garden.svg" },
+    "bg-forest": { "file": "art/bg-forest.svg" },
+    "bg-pond": { "file": "art/bg-pond.svg" },
+    "bg-hill": { "file": "art/bg-hill.svg" },
+    "lele": { "file": "art/lele.svg", "outline": 7 },
+    "star": { "file": "art/star.svg", "outline": 6 },
+    "lantern": { "file": "art/lantern.svg", "outline": 6 },
+    "fireflies": { "file": "art/fireflies.svg" },
+    "owl": { "file": "art/owl.svg", "outline": 7 },
+    "tree": { "file": "art/tree.svg", "outline": 7 },
+    "mushroom": { "file": "art/mushroom.svg", "outline": 6 },
+    "flower": { "file": "art/flower.svg", "outline": 6 },
+    "lily": { "file": "art/lily.svg", "outline": 6 },
+    "frog": { "file": "art/frog.svg", "outline": 6 },
+    "bed": { "file": "art/bed.svg", "outline": 7 }
+  },
+  "pages": [
+    {
+      "id": "night",
+      "heading": "睡不着的夜晚",
+      "text": "夜深了， {小兔乐乐:lele/look} 还 没有 {睡着:lele/yawn}。 她 趴在 {窗边:sky/glow}， 忽然 看见 一颗 {小星星:star/fall} 从 天上 {掉:star/fall} 了 下来！",
+      "hint": "点点乐乐，再点点那颗小星星。",
+      "scene": {
+        "back": "bg-bedroom",
+        "layers": [
+          { "name": "bed", "art": "bed", "label": "小床", "x": -0.26, "z": -0.05, "width": 0.6, "tap": "bounce" },
+          { "name": "lele", "art": "lele", "label": "乐乐", "x": 0.16, "z": 0.22, "width": 0.34, "tap": "hop" },
+          { "name": "star", "art": "star", "label": "小星星", "x": 0.28, "y": 0.5, "z": -0.38, "width": 0.17, "float": true, "tap": "twinkle" }
+        ]
+      }
+    },
+    {
+      "id": "garden",
+      "heading": "花园里的萤火虫",
+      "text": "乐乐 提着 {小灯笼:lantern/glow}， 悄悄 走进 {花园:flower/wiggle}。 {萤火虫:fireflies/twinkle} 飞 过来 说： “星星 掉进 {森林:sky/glow} 里 啦！”",
+      "hint": "摸摸灯笼，看看萤火虫。",
+      "scene": {
+        "back": "bg-garden",
+        "layers": [
+          { "name": "flower", "art": "flower", "label": "花", "x": -0.3, "z": 0.05, "width": 0.44, "tap": "wiggle" },
+          { "name": "lele", "art": "lele", "label": "乐乐", "x": 0.02, "z": 0.24, "width": 0.34, "tap": "hop" },
+          { "name": "lantern", "art": "lantern", "label": "小灯笼", "x": 0.17, "y": 0.1, "z": 0.3, "width": 0.13, "float": true, "tap": "glow" },
+          { "name": "fireflies", "art": "fireflies", "label": "萤火虫", "x": 0.28, "y": 0.34, "z": -0.15, "width": 0.39, "float": true, "tap": "twinkle", "glow": true }
+        ]
+      }
+    },
+    {
+      "id": "forest",
+      "heading": "森林里的猫头鹰",
+      "text": "森林 里 黑黑的。 {猫头鹰:owl/hoot} 眨了眨 {大眼睛:owl/blink}， 说： “别怕， 跟着 那道 {亮光:star/twinkle} 走。” 乐乐 {点点头:lele/hop}。",
+      "hint": "点点猫头鹰，它会咕咕叫。",
+      "scene": {
+        "back": "bg-forest",
+        "layers": [
+          { "name": "tree", "art": "tree", "label": "大树", "x": -0.28, "z": -0.22, "width": 0.6, "tap": "wiggle" },
+          { "name": "owl", "art": "owl", "label": "猫头鹰", "x": -0.24, "y": 0.36, "z": -0.1, "width": 0.22, "float": true, "tap": "hoot" },
+          { "name": "mushroom", "art": "mushroom", "label": "蘑菇", "x": 0.3, "z": 0.12, "width": 0.29, "tap": "glow", "glow": true },
+          { "name": "lele", "art": "lele", "label": "乐乐", "x": 0.06, "z": 0.26, "width": 0.33, "tap": "hop" },
+          { "name": "star", "art": "star", "label": "亮光", "x": 0.34, "y": 0.44, "z": -0.42, "width": 0.12, "float": true, "tap": "twinkle" }
+        ]
+      }
+    },
+    {
+      "id": "pond",
+      "heading": "池塘边的小星星",
+      "text": "在 {池塘:frog/hop} 边， 乐乐 找到了 {小星星:star/glow}。 它 躺在 {荷叶:lily/wiggle} 上， 小声 地 {哭:star/wiggle}： “我 想 回家。”",
+      "hint": "点点青蛙，再点点荷叶上的星星。",
+      "scene": {
+        "back": "bg-pond",
+        "layers": [
+          { "name": "lily", "art": "lily", "label": "荷叶", "x": 0.04, "z": 0.02, "width": 0.55, "flat": true, "tap": "wiggle" },
+          { "name": "star", "art": "star", "label": "小星星", "x": 0.04, "y": 0.02, "z": 0.02, "width": 0.17, "tap": "glow" },
+          { "name": "frog", "art": "frog", "label": "青蛙", "x": -0.32, "z": 0.24, "width": 0.23, "tap": "hop", "sound": "ribbit" },
+          { "name": "lele", "art": "lele", "label": "乐乐", "x": 0.32, "z": 0.3, "width": 0.31, "tap": "hop" }
+        ]
+      }
+    },
+    {
+      "id": "hill",
+      "heading": "送星星回家",
+      "text": "乐乐 抱着 {星星:star/glow}， 爬上 最高 的 {山坡:lele/hop}。 她 用力 一 {跳:lele/jump}， 把 星星 {送回:star/rise} 了 {天空:sky/glow}！",
+      "hint": "点点星星，帮它飞回天上。",
+      "scene": {
+        "back": "bg-hill",
+        "layers": [
+          { "name": "lele", "art": "lele", "label": "乐乐", "x": -0.08, "z": 0.2, "width": 0.36, "tap": "jump" },
+          { "name": "star", "art": "star", "label": "星星", "x": 0.1, "y": 0.28, "z": 0.12, "width": 0.17, "float": true, "tap": "rise" }
+        ]
+      }
+    },
+    {
+      "id": "goodnight",
+      "heading": "晚安，星星",
+      "text": "{星星:star/twinkle} 在 天上 {眨眨眼:star/twinkle}： “谢谢 你， 乐乐！” 乐乐 回到 {小床:bed/bounce}， 甜甜地 {睡着:lele/sleep} 了。",
+      "hint": "对星星说晚安吧。",
+      "scene": {
+        "back": "bg-bedroom",
+        "layers": [
+          { "name": "bed", "art": "bed", "label": "小床", "x": -0.14, "z": 0.02, "width": 0.65, "tap": "bounce" },
+          { "name": "lele", "art": "lele", "label": "乐乐", "x": 0.26, "z": 0.26, "width": 0.29, "tap": "sleep" },
+          { "name": "star", "art": "star", "label": "星星", "x": 0.02, "y": 0.52, "z": -0.4, "width": 0.18, "float": true, "tap": "twinkle" }
+        ]
+      }
+    }
+  ],
+  "end": {
+    "heading": "完",
+    "text": "故事 讲完 啦。 今晚， 你 也 抬头 看看 {星星:star/twinkle} 吧！",
+    "prompt": "再读一遍，或者回到书架选一本新书。",
+    "scene": {
+      "back": "bg-hill",
+      "layers": [
+        { "name": "lele", "art": "lele", "label": "乐乐", "x": -0.16, "z": 0.2, "width": 0.34, "tap": "hop" },
+        { "name": "fireflies", "art": "fireflies", "label": "萤火虫", "x": 0.26, "y": 0.2, "z": 0.05, "width": 0.34, "float": true, "tap": "twinkle", "glow": true },
+        { "name": "star", "art": "star", "label": "星星", "x": 0.18, "y": 0.5, "z": -0.4, "width": 0.16, "float": true, "tap": "twinkle" }
+      ]
+    }
+  }
+}

@@ -2,6 +2,11 @@ import * as THREE from "three";
 import { easeInOut, lerp, tween } from "./anim.js";
 import { wallTexture, woodTexture } from "./textures.js";
 import { SHELF_Y, SHELF_Z } from "./shelf.js";
+import { buildProps } from "./props.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
 /* Renderer, room, lights and the camera. The camera frames a named view so that its subject
    fills the part of the screen the HTML panels leave free (see `free` in frame()). */
@@ -43,6 +48,13 @@ export class Stage {
 
     this.buildRoom();
     this.buildLights();
+    // bloom picks out only what is brighter than lit paper: bulbs, fireflies, glowing cut-outs, sparkles
+    this.composer = new EffectComposer(this.renderer);
+    this.composer.addPass(new RenderPass(this.scene, this.camera));
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.55, 0.5, 1.0);
+    this.composer.addPass(this.bloom);
+    this.composer.addPass(new OutputPass());
+    this.time = 0;
     this.view = "shelf";
     this.free = null;
     this.resize();
@@ -58,7 +70,8 @@ export class Stage {
     const wall = new THREE.Mesh(new THREE.PlaneGeometry(14, 7), new THREE.MeshStandardMaterial({ map: wallTexture(), roughness: 1 }));
     wall.position.set(0, 2.5, SHELF_Z - 0.05);
     wall.receiveShadow = true;
-    this.scene.add(table, edge, wall);
+    this.props = buildProps();
+    this.scene.add(table, edge, wall, this.props);
   }
 
   buildLights() {
@@ -148,6 +161,8 @@ export class Stage {
   }
 
   update(dt) {
+    this.time += dt;
+    this.props.userData.update(this.time);
     if (this.close && performance.now() > this.close.until) this.close = null;
     // ease in slowly, like a cut in a film, and back out a little faster
     const goal = this.close ? 1 : 0;
@@ -171,6 +186,8 @@ export class Stage {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
     this.renderer.setSize(this.width, this.height, false);
+    this.composer.setPixelRatio(this.renderer.getPixelRatio());
+    this.composer.setSize(this.width, this.height);
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
     const to = this.pose(this.view);
@@ -185,6 +202,6 @@ export class Stage {
   }
 
   render() {
-    this.renderer.render(this.scene, this.camera);
+    this.composer.render();
   }
 }

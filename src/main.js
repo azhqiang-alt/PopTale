@@ -77,6 +77,7 @@ function loop(now) {
   if (state.diorama) state.diorama.update(dt, now / 1000);
   sparkles.update(dt);
   narrator.update();
+  stage.update(dt);
   stage.render();
   requestAnimationFrame(loop);
 }
@@ -89,8 +90,11 @@ function freeRect(view) {
   if (view === "shelf") return { x: 0, y: 90, w: W, h: H - 150 };
   if (view === "closed") return portrait ? { x: 0, y: 0, w: W, h: H - 250 } : { x: 0, y: 0, w: W - Math.min(340, W * 0.86) - Math.max(24, W * 0.04), h: H };
   const bar = portrait ? 58 : 64;
-  if (portrait) return { x: 0, y: bar, w: W, h: H * 0.54 - bar };
-  const panelRight = Math.max(20, W * 0.03) + Math.min(420, W * 0.36);
+  // measure the text panel when it is up (its height follows the page's text); else assume its size
+  const panel = document.getElementById("text-panel");
+  const r = panel && !panel.hidden ? panel.getBoundingClientRect() : null;
+  if (portrait) return { x: 0, y: bar, w: W, h: Math.max(H * 0.36, (r ? r.top - 8 : H * 0.54)) - bar };
+  const panelRight = r ? r.right + 12 : Math.max(20, W * 0.03) + Math.min(440, W * 0.36) + 12;
   return { x: panelRight, y: bar, w: W - panelRight, h: H - bar };
 }
 
@@ -228,6 +232,7 @@ async function goTo(index, { autoRead = true } = {}) {
   stopReading();
   reading.clearActive();
   ui.hideTip();
+  stage.clearCloseUp();
   const from = state.page;
   if (state.diorama) { await state.diorama.popOut(); state.diorama.dispose(); state.diorama = null; }
   sound.pageTurn();
@@ -326,7 +331,10 @@ async function startReading() {
     onWord: (i) => {
       reading.setActive(i);
       const token = page.tokens[i];
-      if (token?.link && state.diorama) state.diorama.act(token.link, token.action || "bounce", { silent: true });
+      if (token?.link && state.diorama) {
+        state.diorama.act(token.link, token.action || "bounce", { silent: true });
+        storyCloseUp(token.link);
+      }
     },
     onEnd: (complete) => {
       if (state.page !== index) return;
@@ -356,6 +364,23 @@ function toggleReading() {
   if (state.reading === "playing") { narrator.pause(); setReading("paused"); sound.duck(false); }
   else if (state.reading === "paused") { narrator.resume(); setReading("playing"); sound.duck(true); }
   else startReading();
+}
+
+/* ---------- the camera follows the story ---------- */
+
+/** While the narrator reads, drift in on the picture of each linked word, like a cut in a film. */
+function storyCloseUp(name) {
+  const now = performance.now();
+  if (now - (state.lastCloseUp || 0) < 1400) return;
+  if (closeUp(name, { hold: 3, wide: 1.3 })) state.lastCloseUp = now;
+}
+
+function closeUp(name, options) {
+  const item = state.diorama?.objects[name];
+  if (!item) return false;
+  const { card } = item;
+  stage.closeUp(card.center(), { radius: Math.max(card.width, card.height) / 2, ...options });
+  return true;
 }
 
 /* ---------- touching words and things ---------- */
@@ -396,6 +421,7 @@ function bindInput() {
   const canvas = stage.canvas;
   canvas.addEventListener("pointermove", (e) => {
     if (e.pointerType === "touch") return;
+    stage.setPointer((e.clientX / stage.width) * 2 - 1, -(e.clientY / stage.height) * 2 + 1);
     let pointer = false;
     if (state.view === "shelf") {
       const item = shelf.pick(stage.raycaster(e.clientX, e.clientY));
@@ -420,7 +446,7 @@ function bindInput() {
       if (ray.intersectObject(state.book3d.group, true).length) openBook();
     } else if (state.view === "book" && state.diorama && !state.busy) {
       const item = state.diorama.pick(ray);
-      if (item) state.diorama.tap(item);
+      if (item) { state.diorama.tap(item); if (item.name !== "sky") closeUp(item.name, { hold: 2.4 }); }
     }
   });
   // browsers keep audio silent until the first touch or key

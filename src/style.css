@@ -70,9 +70,10 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 @keyframes pop { 40% { transform: scale(1.35); } }
 
 /* ---------- reading card ---------- */
-.text-panel { position: fixed; left: max(20px, 3vw); top: calc(var(--bar-h) + 12px); bottom: 20px; width: min(420px, 36vw); display: flex; flex-direction: column; border-radius: 24px; background: var(--paper); box-shadow: var(--shadow); z-index: 4; overflow: hidden; }
+/* sized to its text and centred beside the book, lying over the left page */
+.text-panel { position: fixed; left: max(20px, 3vw); top: calc(50% + var(--bar-h) / 2); transform: translateY(-50%); max-height: calc(100% - var(--bar-h) - 32px); width: min(440px, 36vw); display: flex; flex-direction: column; border-radius: 24px; background: var(--paper); box-shadow: var(--shadow); z-index: 4; overflow: hidden; }
 .text-panel::before { content: ""; position: absolute; inset: 8px; border: 2px dashed var(--paper-edge); border-radius: 18px; pointer-events: none; }
-.text-inner { flex: 1; overflow-y: auto; padding: 30px 30px 12px; position: relative; }
+.text-inner { flex: 0 1 auto; overflow-y: auto; padding: 30px 30px 12px; position: relative; }
 .eyebrow { font-size: 13px; letter-spacing: 3px; color: var(--muted); }
 .text-panel h2 { margin: 6px 0 16px; font-family: var(--story); font-size: 30px; color: #2b3a78; }
 .words { margin: 0; font-family: var(--story); font-size: 30px; line-height: 1.9; letter-spacing: 1px; }
@@ -126,7 +127,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 /* ---------- phones and portrait screens: the card becomes a sheet at the bottom ---------- */
 @media (max-aspect-ratio: 1/1), (max-width: 760px) {
   :root { --bar-h: 58px; }
-  .text-panel { left: 10px; right: 10px; top: auto; bottom: max(10px, env(safe-area-inset-bottom)); width: auto; max-height: 46vh; }
+  .text-panel { left: 10px; right: 10px; top: auto; bottom: max(10px, env(safe-area-inset-bottom)); transform: none; width: auto; max-height: 46vh; }
   .text-inner { padding: 20px 22px 6px; }
   .text-panel h2 { font-size: 22px; margin-bottom: 8px; }
   .words { font-size: 24px; line-height: 1.8; }

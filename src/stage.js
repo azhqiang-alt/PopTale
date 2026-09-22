@@ -13,7 +13,7 @@ const VIEWS = {
   shelf: { center: [0, SHELF_Y + 0.3, SHELF_Z], half: [1.55, 0.55], dir: [0, 0.12, 1] },
   closed: { center: [0.52, 0.05, 0.05], half: [0.75, 0.85], dir: [0, 1.1, 0.95] },
   // the right page with its pop-up fills the free rect; the left page runs under the text panel
-  open: { center: [0.5, 0.3, -0.1], half: [0.54, 0.66], dir: [0, 0.8, 1] },
+  open: { center: [0.47, 0.32, -0.2], half: [0.5, 0.58], dir: [0, 0.8, 1] },
   // phones: the same, with the text panel below the book
   openNarrow: { center: [0.46, 0.3, -0.1], half: [0.58, 0.72], dir: [0, 0.85, 1] },
 };
@@ -35,6 +35,11 @@ export class Stage {
     this.camera = new THREE.PerspectiveCamera(FOV, 1, 0.05, 40);
     this.target = new THREE.Vector3();
     this.shift = { x: 0, y: 0 };
+    // on top of the framed view: a close-up that comes and goes, and a little pointer parallax
+    this.close = null; // { position, target, until }
+    this.closeMix = 0;
+    this.lean = new THREE.Vector2();
+    this.pointer = new THREE.Vector2();
 
     this.buildRoom();
     this.buildLights();
@@ -95,10 +100,11 @@ export class Stage {
   /** Move to a view (animated unless duration is 0). `free` is the screen rect left for the scene. */
   frame(name, { free = this.free, duration = 1.2 } = {}) {
     this.view = name;
+    this.close = null;
     this.free = free;
     const to = this.pose(name);
     if (!duration) { this.apply(to.position, to.target, to.shift); return Promise.resolve(); }
-    const from = { position: this.camera.position.clone(), target: this.target.clone(), shift: { ...this.shift } };
+    const from = { position: this.position.clone(), target: this.target.clone(), shift: { ...this.shift } };
     return tween(duration, (p) => {
       const e = easeInOut(p);
       this.apply(
@@ -110,12 +116,55 @@ export class Stage {
   }
 
   apply(position, target, shift) {
-    this.camera.position.copy(position);
+    this.position = position.clone();
     this.target.copy(target);
-    this.camera.lookAt(target);
     this.shift = shift;
     // shift the picture so the subject sits in the middle of the free rect
     this.camera.setViewOffset(this.width, this.height, -shift.x, -shift.y, this.width, this.height);
+    this.place();
+  }
+
+  /** Drift in on a point for a while (a spoken or tapped object), then back to the framed view. */
+  closeUp(point, { radius = 0.2, hold = 3, wide = 1 } = {}) {
+    // come from the viewer's side of the point, about 30 degrees above it, so faces stay readable
+    const flat = this.position.clone().sub(point).setY(0);
+    if (flat.lengthSq() < 1e-6) flat.set(0, 0, 1);
+    flat.normalize();
+    const full = this.position.distanceTo(this.target);
+    // a narrow free rect (phones) sees less across, so stand further back there
+    const narrow = this.free && this.free.w < this.free.h ? 1.3 : 1;
+    const dist = THREE.MathUtils.clamp(radius * 5 * wide * narrow, 1.0 * narrow, full * 0.85);
+    const position = point.clone().addScaledVector(flat, dist * Math.cos(0.52)).add(new THREE.Vector3(0, dist * Math.sin(0.52), 0));
+    this.close = { position, target: point.clone(), until: performance.now() + hold * 1000 };
+  }
+
+  clearCloseUp() {
+    this.close = null;
+  }
+
+  /** Where the pointer is, in -1..1 (the camera leans a little towards it). */
+  setPointer(x, y) {
+    this.pointer.set(x, y);
+  }
+
+  update(dt) {
+    if (this.close && performance.now() > this.close.until) this.close = null;
+    // ease in slowly, like a cut in a film, and back out a little faster
+    const goal = this.close ? 1 : 0;
+    this.closeMix += (goal - this.closeMix) * (1 - Math.exp(-dt * (this.close ? 1.4 : 1.9)));
+    this.lean.lerp(this.pointer, 1 - Math.exp(-dt * 2));
+    if (this.close) this.lastClose = this.close;
+    this.place();
+  }
+
+  place() {
+    const e = easeInOut(Math.min(1, Math.max(0, this.closeMix)));
+    const c = this.lastClose;
+    const position = c && e > 1e-4 ? this.position.clone().lerp(c.position, e) : this.position.clone();
+    const target = c && e > 1e-4 ? this.target.clone().lerp(c.target, e) : this.target.clone();
+    if (this.view.startsWith("open")) position.add(new THREE.Vector3(this.lean.x * 0.07, this.lean.y * 0.035, 0));
+    this.camera.position.copy(position);
+    this.camera.lookAt(target);
   }
 
   resize() {

@@ -380,7 +380,12 @@ def main():
             samples, timings = build_page(clips, toks)
             write_mp3(samples, out_dir / f"page-{i}.mp3", tmp)
             all_timings[f"page-{i}"] = timings
-            print(f"page-{i}: {len(toks)} tokens, {len(samples) / RATE:.1f}s")
+            seconds = len(samples) / RATE
+            print(f"page-{i}: {len(toks)} tokens, {seconds:.1f}s")
+            # a model voice sometimes rambles or stalls; normal reading is about 0.3-0.6 s a character
+            per_char = seconds / max(1.0, sum(weight(t) for t in toks))
+            if per_char > 0.8:
+                print(f"  warning: page-{i} runs {per_char:.2f}s a character; listen to it (the instruct may slow the voice too much)")
         title, _ = build_page(clips, [story["title"]])
         write_mp3(title, out_dir / "title.mp3", tmp)
     (out_dir / "timings.json").write_text(json.dumps(all_timings, ensure_ascii=False), encoding="utf-8")

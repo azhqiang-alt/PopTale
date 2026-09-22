@@ -1,0 +1,479 @@
+{
+  "id": "paper-boat",
+  "title": "纸船去旅行",
+  "subtitle": "一只小纸船，顺着小河去看海",
+  "blurb": "朵朵折了一只小纸船，把它放进小河。纸船遇见鸭子、小狗和小鱼，一路漂到了大海。",
+  "language": "zh",
+  "cover": "art/cover.webp",
+  "colors": {
+    "cloth": "#3f6fb5",
+    "endpaper": "#cfe7c4"
+  },
+  "narrator": {
+    "provider": "qwen",
+    "voice": "vivian",
+    "say": {
+      "voice": "Tingting",
+      "rate": 150
+    },
+    "instruct": "用轻柔、好奇、充满想象的语气，给小朋友讲故事"
+  },
+  "artStyle": "Children's picture book illustration, soft gouache and watercolor texture with gentle colored-pencil lines, cute rounded shapes, storybook art.",
+  "sceneStyle": "Fresh sunny palette of clear blue water, green river banks and warm sunlight.",
+  "art": {
+    "cover": {
+      "kind": "cover",
+      "subtitle": "萤火绘本 · 第五册",
+      "prompt": "A small white paper boat with a light blue sail floats on a sparkling blue river winding through green meadows towards a distant sea with a lighthouse, a little yellow duckling swimming beside it.",
+      "file": "art/cover.webp",
+      "seed": 34102
+    },
+    "bg-riverbank": {
+      "kind": "scene",
+      "prompt": "A grassy river bank on a sunny morning, a small clear river, wild flowers, a little wooden fence and a cottage far away.",
+      "file": "art/bg-riverbank.webp",
+      "seed": 85847
+    },
+    "bg-reeds": {
+      "kind": "scene",
+      "prompt": "A calm river winding between tall green reeds and water lilies, soft sunlight, dragonflies far away.",
+      "file": "art/bg-reeds.webp",
+      "seed": 11578
+    },
+    "bg-bridge": {
+      "kind": "scene",
+      "prompt": "An old arched stone bridge over a clear river, willow trees hanging over the water, a sunny sky.",
+      "file": "art/bg-bridge.webp",
+      "seed": 23422
+    },
+    "bg-sea": {
+      "kind": "scene",
+      "prompt": "A wide blue sea meeting a sandy shore, gentle waves, a red and white lighthouse on the rocks far away, seagulls in the sky.",
+      "file": "art/bg-sea.webp",
+      "seed": 4347
+    },
+    "bg-beach": {
+      "kind": "scene",
+      "prompt": "A quiet sandy beach late at night under a deep dark navy blue night sky full of stars, a big round glowing moon, calm dark waves glittering with moonlight, the lighthouse beam glowing far away. Night time, dark sky, not daytime.",
+      "sceneStyle": "Calm night palette of deep navy blue, silver moonlight and soft gold.",
+      "file": "art/bg-beach.webp",
+      "seed": 62732
+    },
+    "girl": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "A little girl named Duoduo with short black hair in two small buns, a yellow raincoat-style dress and red boots, big bright eyes, kneeling and smiling.",
+      "file": "art/girl.webp",
+      "seed": 70152
+    },
+    "boat": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "A small folded white paper boat with light blue edges and a tiny drawn smiling face on its side, origami style.",
+      "file": "art/boat.webp",
+      "seed": 61066
+    },
+    "duck": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A mother duck with white feathers and an orange beak, swimming calmly, side view, kind eyes.",
+      "file": "art/duck.webp",
+      "seed": 28654
+    },
+    "duckling": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A tiny fluffy yellow duckling swimming, cute and cheerful, side view.",
+      "file": "art/duckling.webp",
+      "seed": 74924
+    },
+    "dog": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A small cute brown and white puppy sitting, one ear up, tongue out, happy face.",
+      "file": "art/dog.webp",
+      "seed": 852
+    },
+    "fish": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A small bright orange fish jumping, curved body, sparkling droplets, cute face.",
+      "file": "art/fish.webp",
+      "seed": 17575
+    },
+    "gull": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A cute white seagull with grey wings spread, yellow beak, flying, friendly face.",
+      "file": "art/gull.webp",
+      "seed": 67389
+    },
+    "lighthouse": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "A small red and white striped lighthouse with a glowing yellow lamp on top, standing on a little rock.",
+      "file": "art/lighthouse.webp",
+      "seed": 92618
+    },
+    "wave": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A single rolling blue sea wave with a white foamy crest breaking forward, cartoon style. Only the water wave: no objects, no stones, no rocks, no boats, no sun.",
+      "file": "art/wave.webp",
+      "seed": 85891
+    },
+    "shell": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A pink spiral seashell and a small orange starfish side by side on a little patch of sand.",
+      "file": "art/shell.webp",
+      "seed": 38846
+    },
+    "lily": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A single green lily pad seen from above, round with one narrow notch, with a small pink lotus flower on it.",
+      "file": "art/lily.webp",
+      "seed": 88279
+    }
+  },
+  "pages": [
+    {
+      "id": "fold",
+      "heading": "折纸船",
+      "text": "{朵朵:girl/hop} 用 一张 蓝边 的 纸， 折了 一只 {小纸船:boat/spin}。 她 把 纸船 放进 {小河:sky/glow} 里： “去 旅行 吧！”",
+      "hint": "点点小纸船，它会转一圈。",
+      "scene": {
+        "back": "bg-riverbank",
+        "layers": [
+          {
+            "name": "girl",
+            "art": "girl",
+            "label": "朵朵",
+            "x": -0.22,
+            "z": 0.14,
+            "width": 0.3,
+            "tap": "hop"
+          },
+          {
+            "name": "boat",
+            "art": "boat",
+            "label": "小纸船",
+            "x": 0.22,
+            "z": 0.24,
+            "width": 0.33,
+            "tap": "swim"
+          },
+          {
+            "name": "lily",
+            "art": "lily",
+            "label": "荷叶",
+            "x": 0.36,
+            "z": -0.0,
+            "width": 0.24,
+            "tap": "wiggle",
+            "flat": true
+          },
+          {
+            "name": "duckling",
+            "art": "duckling",
+            "label": "小鸭子",
+            "x": 0.3,
+            "z": -0.13,
+            "width": 0.16,
+            "tap": "swim"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ducks",
+      "heading": "鸭妈妈和小鸭子",
+      "text": "纸船 顺着 河水 {漂呀漂:boat/swim}。 {鸭妈妈:duck/look} 带着 {小鸭子:duckling/hop} 游 过来， {嘎嘎:duckling/jump} 地 打 招呼。",
+      "hint": "点点小鸭子，它会跳一跳。",
+      "scene": {
+        "back": "bg-reeds",
+        "layers": [
+          {
+            "name": "duck",
+            "art": "duck",
+            "label": "鸭妈妈",
+            "x": -0.22,
+            "z": -0.02,
+            "width": 0.3,
+            "tap": "look"
+          },
+          {
+            "name": "duckling",
+            "art": "duckling",
+            "label": "小鸭子",
+            "x": 0.02,
+            "z": 0.11,
+            "width": 0.18,
+            "tap": "hop"
+          },
+          {
+            "name": "duckling2",
+            "art": "duckling",
+            "label": "小鸭子",
+            "x": -0.4,
+            "z": 0.19,
+            "width": 0.16,
+            "tap": "hop"
+          },
+          {
+            "name": "boat",
+            "art": "boat",
+            "label": "小纸船",
+            "x": 0.26,
+            "z": 0.24,
+            "width": 0.33,
+            "tap": "swim"
+          },
+          {
+            "name": "lily",
+            "art": "lily",
+            "label": "荷叶",
+            "x": 0.3,
+            "z": -0.13,
+            "width": 0.24,
+            "tap": "wiggle",
+            "flat": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "bridge",
+      "heading": "石桥下",
+      "text": "前面 有 一座 {石桥:sky/glow}。 纸船 从 桥 下 {钻:boat/swim} 过去， 桥上 的 {小狗:dog/hop} 汪汪 地 叫： “一路 顺风！”",
+      "hint": "点点小狗，听它汪汪叫。",
+      "scene": {
+        "back": "bg-bridge",
+        "layers": [
+          {
+            "name": "dog",
+            "art": "dog",
+            "label": "小狗",
+            "x": 0.1,
+            "z": -0.4,
+            "width": 0.2,
+            "tap": "hop",
+            "y": 0.3,
+            "float": true
+          },
+          {
+            "name": "boat",
+            "art": "boat",
+            "label": "小纸船",
+            "x": -0.08,
+            "z": 0.19,
+            "width": 0.36,
+            "tap": "swim"
+          },
+          {
+            "name": "fish",
+            "art": "fish",
+            "label": "小鱼",
+            "x": 0.34,
+            "z": 0.11,
+            "width": 0.18,
+            "tap": "jump"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fish",
+      "heading": "跳出水面的小鱼",
+      "text": "河水 清清的， {小鱼:fish/jump} 跳出 水面： “纸船， 你 要 去 哪儿？” 纸船 说： “我 要 去 看 {大海:sky/glow}！”",
+      "hint": "点点小鱼，它会跳出水面。",
+      "scene": {
+        "back": "bg-reeds",
+        "layers": [
+          {
+            "name": "fish",
+            "art": "fish",
+            "label": "小鱼",
+            "x": 0.2,
+            "z": 0.03,
+            "width": 0.26,
+            "tap": "jump"
+          },
+          {
+            "name": "fish2",
+            "art": "fish",
+            "label": "小鱼",
+            "x": -0.32,
+            "z": -0.13,
+            "width": 0.18,
+            "tap": "jump"
+          },
+          {
+            "name": "boat",
+            "art": "boat",
+            "label": "小纸船",
+            "x": -0.08,
+            "z": 0.22,
+            "width": 0.39,
+            "tap": "swim"
+          },
+          {
+            "name": "lily",
+            "art": "lily",
+            "label": "荷叶",
+            "x": 0.34,
+            "z": 0.27,
+            "width": 0.24,
+            "tap": "wiggle",
+            "flat": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "sea",
+      "heading": "看见大海",
+      "text": "小河 流进 了 {大海:sky/glow}。 {海鸥:gull/hop} 在 天上 飞， 远远的 {灯塔:lighthouse/glow} 向 纸船 招手。",
+      "hint": "点点灯塔，让它亮起来。",
+      "scene": {
+        "back": "bg-sea",
+        "layers": [
+          {
+            "name": "lighthouse",
+            "art": "lighthouse",
+            "label": "灯塔",
+            "x": 0.32,
+            "z": -0.29,
+            "width": 0.24,
+            "tap": "glow",
+            "glow": true
+          },
+          {
+            "name": "gull",
+            "art": "gull",
+            "label": "海鸥",
+            "x": -0.2,
+            "z": -0.21,
+            "width": 0.2,
+            "tap": "hop",
+            "y": 0.46,
+            "float": true
+          },
+          {
+            "name": "wave",
+            "art": "wave",
+            "label": "海浪",
+            "x": -0.24,
+            "z": 0.08,
+            "width": 0.3,
+            "tap": "swim"
+          },
+          {
+            "name": "boat",
+            "art": "boat",
+            "label": "小纸船",
+            "x": 0.08,
+            "z": 0.22,
+            "width": 0.36,
+            "tap": "swim"
+          },
+          {
+            "name": "shell",
+            "art": "shell",
+            "label": "贝壳",
+            "x": 0.36,
+            "z": 0.32,
+            "width": 0.18,
+            "tap": "wiggle"
+          }
+        ]
+      }
+    },
+    {
+      "id": "night",
+      "heading": "晚安，纸船",
+      "text": "月亮 升起 来 了。 纸船 靠在 {沙滩:shell/wiggle} 上， 听着 {海浪:wave/swim} 唱歌， 慢慢地 {睡着:boat/sleep} 了。",
+      "hint": "轻轻点点纸船，别吵醒它。",
+      "scene": {
+        "back": "bg-beach",
+        "layers": [
+          {
+            "name": "wave",
+            "art": "wave",
+            "label": "海浪",
+            "x": 0.2,
+            "z": -0.09,
+            "width": 0.34,
+            "tap": "swim"
+          },
+          {
+            "name": "boat",
+            "art": "boat",
+            "label": "小纸船",
+            "x": -0.12,
+            "z": 0.19,
+            "width": 0.39,
+            "tap": "sleep"
+          },
+          {
+            "name": "shell",
+            "art": "shell",
+            "label": "贝壳",
+            "x": 0.3,
+            "z": 0.29,
+            "width": 0.18,
+            "tap": "wiggle"
+          },
+          {
+            "name": "lighthouse",
+            "art": "lighthouse",
+            "label": "灯塔",
+            "x": -0.34,
+            "z": -0.29,
+            "width": 0.17,
+            "tap": "glow",
+            "glow": true
+          }
+        ]
+      }
+    }
+  ],
+  "end": {
+    "heading": "完",
+    "text": "故事 讲完 啦。 你 也 来 折 一只 {纸船:boat/spin}， 让 它 去 {旅行:boat/swim} 吧！",
+    "prompt": "再读一遍，或者回到书架选一本新书。",
+    "scene": {
+      "back": "bg-riverbank",
+      "layers": [
+        {
+          "name": "girl",
+          "art": "girl",
+          "label": "朵朵",
+          "x": -0.2,
+          "z": 0.16,
+          "width": 0.3,
+          "tap": "hop"
+        },
+        {
+          "name": "boat",
+          "art": "boat",
+          "label": "小纸船",
+          "x": 0.2,
+          "z": 0.24,
+          "width": 0.33,
+          "tap": "swim"
+        },
+        {
+          "name": "duckling",
+          "art": "duckling",
+          "label": "小鸭子",
+          "x": 0.34,
+          "z": -0.05,
+          "width": 0.16,
+          "tap": "swim"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420">
+<rect x="14" y="14" width="272" height="392" rx="22" fill="#d7333d" stroke="#3d2a2a" stroke-width="7"/>
+<path d="M14 120 Q150 200 286 120 V40 Q286 14 260 14 H40 Q14 14 14 40 Z" fill="#b8242e" stroke="#3d2a2a" stroke-width="6"/>
+<circle cx="150" cy="166" r="52" fill="#f3c15a" stroke="#3d2a2a" stroke-width="6"/>
+<text x="150" y="172" text-anchor="middle" dominant-baseline="middle" font-size="64" fill="#b8242e" font-family="Kaiti SC, STKaiti, KaiTi, PingFang SC, Hiragino Sans GB, serif" font-weight="700">福</text>
+<g fill="#f3c15a" opacity=".85"><circle cx="70" cy="330" r="10"/><circle cx="230" cy="330" r="10"/><circle cx="150" cy="360" r="10"/></g>
+</svg>

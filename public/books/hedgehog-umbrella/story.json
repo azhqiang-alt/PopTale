@@ -1,0 +1,553 @@
+{
+  "id": "hedgehog-umbrella",
+  "title": "小刺猬的雨伞",
+  "subtitle": "一片叶子，能遮住几个朋友？",
+  "blurb": "下雨了，小刺猬圆圆摘下一片大叶子当雨伞。路上遇到的朋友都挤到伞下，伞不够大，圆圆有办法。",
+  "language": "zh",
+  "cover": "art/cover.webp",
+  "colors": {
+    "cloth": "#4f7a3a",
+    "endpaper": "#f2d98a"
+  },
+  "narrator": {
+    "provider": "qwen",
+    "voice": "vivian",
+    "say": {
+      "voice": "Tingting",
+      "rate": 150
+    },
+    "instruct": "用温暖、亲切、带一点俏皮的语气，给小朋友讲故事"
+  },
+  "artStyle": "Children's picture book illustration, soft gouache and watercolor texture with gentle colored-pencil lines, cute rounded shapes, storybook art.",
+  "sceneStyle": "Soft rainy afternoon palette of fresh green, misty grey-blue and warm yellow light.",
+  "art": {
+    "cover": {
+      "kind": "cover",
+      "subtitle": "萤火绘本 · 第三册",
+      "prompt": "A small cute round hedgehog holds a big green leaf above its head as an umbrella in gentle rain on a forest path, a tiny ant and a squirrel huddling under the leaf with it.",
+      "file": "art/cover.webp",
+      "seed": 75849
+    },
+    "bg-path": {
+      "kind": "scene",
+      "prompt": "A forest path on a cloudy afternoon, tall green trees, ferns and wild flowers, the sky turning grey, leaves blowing in the wind.",
+      "file": "art/bg-path.webp",
+      "seed": 75078
+    },
+    "bg-rain": {
+      "kind": "scene",
+      "prompt": "A forest path in gentle rain, soft rain streaks, puddles on the ground, wet green leaves and ferns.",
+      "file": "art/bg-rain.webp",
+      "seed": 96791
+    },
+    "bg-oak": {
+      "kind": "scene",
+      "prompt": "A big old oak tree in the rain in a forest clearing, roots and moss, grey rainy sky, puddles.",
+      "file": "art/bg-oak.webp",
+      "seed": 62176
+    },
+    "bg-pond": {
+      "kind": "scene",
+      "prompt": "A small forest pond in the rain, ripples on the water, reeds and lily pads, soft grey sky.",
+      "file": "art/bg-pond.webp",
+      "seed": 64499
+    },
+    "bg-sunny": {
+      "kind": "scene",
+      "prompt": "A sunny forest clearing after the rain, wet shining grass, a rainbow in a clearing blue sky, a big flat rock.",
+      "file": "art/bg-sunny.webp",
+      "seed": 14929
+    },
+    "hedgehog": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "A small cute round hedgehog named Yuanyuan with soft brown spines, a cream face, a little black nose, big shiny eyes and rosy cheeks, standing upright on two feet.",
+      "file": "art/hedgehog.webp",
+      "seed": 51527
+    },
+    "leaf": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "One big fresh green leaf with a curled stem, held like an umbrella, with clear veins and a few raindrops on it.",
+      "file": "art/leaf.webp",
+      "seed": 46681
+    },
+    "ant": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A tiny cute red ant with big round eyes and a shy smile, standing on its back legs, waving.",
+      "file": "art/ant.webp",
+      "seed": 40298
+    },
+    "rain": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A cluster of shiny blue raindrops falling in a loose group, cartoon style.",
+      "file": "art/rain.webp",
+      "seed": 85354
+    },
+    "squirrel": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A cute red squirrel with a huge fluffy tail, hugging a pinecone, big eyes, standing upright.",
+      "file": "art/squirrel.webp",
+      "seed": 71846
+    },
+    "pinecone": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A single round brown pinecone, cute storybook style.",
+      "file": "art/pinecone.webp",
+      "seed": 91775
+    },
+    "duck": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A small cute yellow duckling with an orange beak, splashing happily, wings raised, big smile.",
+      "file": "art/duck.webp",
+      "seed": 64207
+    },
+    "mushroom": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A big red mushroom with white spots and a thick cream stem, shiny with raindrops.",
+      "file": "art/mushroom.webp",
+      "seed": 80372
+    },
+    "sun": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A round smiling sun with soft golden rays and rosy cheeks.",
+      "file": "art/sun.webp",
+      "seed": 76600
+    },
+    "puddle": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A small round puddle of clear blue water seen from above with ripples, cartoon style.",
+      "file": "art/puddle.webp",
+      "seed": 57602
+    }
+  },
+  "pages": [
+    {
+      "id": "wind",
+      "heading": "要下雨了",
+      "text": "天 阴 了， {风:sky/glow} 呼呼 地 吹。 {小刺猬圆圆:hedgehog/look} 摘下 一片 {大叶子:leaf/wiggle}， 当作 雨伞。",
+      "hint": "点点圆圆，再点点大叶子。",
+      "scene": {
+        "back": "bg-path",
+        "layers": [
+          {
+            "name": "mushroom",
+            "art": "mushroom",
+            "label": "蘑菇",
+            "x": -0.32,
+            "z": -0.13,
+            "width": 0.24,
+            "tap": "bounce"
+          },
+          {
+            "name": "hedgehog",
+            "art": "hedgehog",
+            "label": "圆圆",
+            "x": 0.02,
+            "z": 0.19,
+            "width": 0.3,
+            "tap": "hop"
+          },
+          {
+            "name": "leaf",
+            "art": "leaf",
+            "label": "大叶子",
+            "x": 0.09,
+            "z": 0.16,
+            "width": 0.36,
+            "tap": "wiggle",
+            "y": 0.1,
+            "float": true
+          },
+          {
+            "name": "pinecone",
+            "art": "pinecone",
+            "label": "松果",
+            "x": 0.36,
+            "z": 0.29,
+            "width": 0.1,
+            "tap": "spin",
+            "flat": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "ant",
+      "heading": "淋湿的小蚂蚁",
+      "text": "滴答， 滴答， {下雨:rain/fall} 了。 路边 的 {小蚂蚁:ant/hop} 淋得 湿湿的。 圆圆 说： “快 到 {伞:leaf/bounce} 下 来！”",
+      "hint": "点点小蚂蚁，请它来躲雨。",
+      "scene": {
+        "back": "bg-rain",
+        "layers": [
+          {
+            "name": "rain",
+            "art": "rain",
+            "label": "雨点",
+            "x": -0.2,
+            "z": -0.21,
+            "width": 0.28,
+            "tap": "fall",
+            "y": 0.48,
+            "float": true
+          },
+          {
+            "name": "hedgehog",
+            "art": "hedgehog",
+            "label": "圆圆",
+            "x": -0.08,
+            "z": 0.17,
+            "width": 0.3,
+            "tap": "hop"
+          },
+          {
+            "name": "leaf",
+            "art": "leaf",
+            "label": "叶子伞",
+            "x": -0.01,
+            "z": 0.14,
+            "width": 0.4,
+            "tap": "bounce",
+            "y": 0.1,
+            "float": true
+          },
+          {
+            "name": "ant",
+            "art": "ant",
+            "label": "小蚂蚁",
+            "x": 0.28,
+            "z": 0.25,
+            "width": 0.13,
+            "tap": "hop"
+          },
+          {
+            "name": "puddle",
+            "art": "puddle",
+            "label": "水坑",
+            "x": 0.3,
+            "z": 0.03,
+            "width": 0.26,
+            "tap": "wiggle",
+            "flat": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "squirrel",
+      "heading": "大树下的小松鼠",
+      "text": "走着 走着， {小松鼠:squirrel/shake} 抱着 {松果:pinecone/spin}， 躲在 {大树:sky/glow} 下 发抖。 “一起 走 吧！” 伞 下 又 多了 一个 朋友。",
+      "hint": "点点小松鼠，它在抖雨水。",
+      "scene": {
+        "back": "bg-oak",
+        "layers": [
+          {
+            "name": "squirrel",
+            "art": "squirrel",
+            "label": "小松鼠",
+            "x": 0.28,
+            "z": 0.03,
+            "width": 0.28,
+            "tap": "shake"
+          },
+          {
+            "name": "pinecone",
+            "art": "pinecone",
+            "label": "松果",
+            "x": 0.36,
+            "z": 0.22,
+            "width": 0.1,
+            "tap": "spin"
+          },
+          {
+            "name": "hedgehog",
+            "art": "hedgehog",
+            "label": "圆圆",
+            "x": -0.14,
+            "z": 0.21,
+            "width": 0.3,
+            "tap": "hop"
+          },
+          {
+            "name": "leaf",
+            "art": "leaf",
+            "label": "叶子伞",
+            "x": -0.07,
+            "z": 0.18,
+            "width": 0.4,
+            "tap": "bounce",
+            "y": 0.1,
+            "float": true
+          },
+          {
+            "name": "ant",
+            "art": "ant",
+            "label": "小蚂蚁",
+            "x": -0.34,
+            "z": 0.3,
+            "width": 0.11,
+            "tap": "hop"
+          }
+        ]
+      }
+    },
+    {
+      "id": "small",
+      "heading": "伞太小了",
+      "text": "{雨:rain/fall} 越 下 越 大， {叶子伞:leaf/wiggle} 挤不下 啦。 圆圆 {想了想:hedgehog/look}， 又 摘下 一片 {大叶子:leaf2/bounce}。",
+      "hint": "点点两片叶子，一片给朋友。",
+      "scene": {
+        "back": "bg-rain",
+        "layers": [
+          {
+            "name": "rain",
+            "art": "rain",
+            "label": "雨点",
+            "x": 0.1,
+            "z": -0.25,
+            "width": 0.3,
+            "tap": "fall",
+            "y": 0.52,
+            "float": true
+          },
+          {
+            "name": "hedgehog",
+            "art": "hedgehog",
+            "label": "圆圆",
+            "x": -0.2,
+            "z": 0.19,
+            "width": 0.3,
+            "tap": "look"
+          },
+          {
+            "name": "leaf",
+            "art": "leaf",
+            "label": "叶子伞",
+            "x": -0.13,
+            "z": 0.16,
+            "width": 0.38,
+            "tap": "wiggle",
+            "y": 0.1,
+            "float": true
+          },
+          {
+            "name": "squirrel",
+            "art": "squirrel",
+            "label": "小松鼠",
+            "x": 0.22,
+            "z": 0.14,
+            "width": 0.26,
+            "tap": "shake"
+          },
+          {
+            "name": "leaf2",
+            "art": "leaf",
+            "label": "大叶子",
+            "x": 0.29,
+            "z": 0.11,
+            "width": 0.36,
+            "tap": "bounce",
+            "y": 0.1,
+            "float": true
+          },
+          {
+            "name": "ant",
+            "art": "ant",
+            "label": "小蚂蚁",
+            "x": 0.0,
+            "z": 0.32,
+            "width": 0.11,
+            "tap": "hop"
+          }
+        ]
+      }
+    },
+    {
+      "id": "duck",
+      "heading": "爱下雨的小鸭子",
+      "text": "池塘 里， {小鸭子:duck/swim} 在 雨 里 {嘎嘎:duck/hop} 地 笑： “我 最 喜欢 下雨 啦！” 大家 听了， 也 {哈哈:hedgehog/hop} 地 笑 了。",
+      "hint": "点点小鸭子，听它嘎嘎笑。",
+      "scene": {
+        "back": "bg-pond",
+        "layers": [
+          {
+            "name": "duck",
+            "art": "duck",
+            "label": "小鸭子",
+            "x": 0.2,
+            "z": -0.09,
+            "width": 0.26,
+            "tap": "swim"
+          },
+          {
+            "name": "rain",
+            "art": "rain",
+            "label": "雨点",
+            "x": 0.2,
+            "z": -0.29,
+            "width": 0.26,
+            "tap": "fall",
+            "y": 0.5,
+            "float": true
+          },
+          {
+            "name": "hedgehog",
+            "art": "hedgehog",
+            "label": "圆圆",
+            "x": -0.22,
+            "z": 0.22,
+            "width": 0.28,
+            "tap": "hop"
+          },
+          {
+            "name": "leaf",
+            "art": "leaf",
+            "label": "叶子伞",
+            "x": -0.15,
+            "z": 0.19,
+            "width": 0.36,
+            "tap": "bounce",
+            "y": 0.1,
+            "float": true
+          },
+          {
+            "name": "squirrel",
+            "art": "squirrel",
+            "label": "小松鼠",
+            "x": 0.1,
+            "z": 0.29,
+            "width": 0.22,
+            "tap": "shake"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sun",
+      "heading": "雨停了",
+      "text": "雨 停了， {太阳:sun/glow} 出来 了。 大家 坐在 {大蘑菇:mushroom/bounce} 旁边， 一起 分享 香香的 {松果:pinecone/spin}。",
+      "hint": "点点太阳，让它更亮。",
+      "scene": {
+        "back": "bg-sunny",
+        "layers": [
+          {
+            "name": "sun",
+            "art": "sun",
+            "label": "太阳",
+            "x": 0.3,
+            "z": -0.29,
+            "width": 0.22,
+            "tap": "glow",
+            "y": 0.52,
+            "float": true,
+            "glow": true
+          },
+          {
+            "name": "mushroom",
+            "art": "mushroom",
+            "label": "大蘑菇",
+            "x": -0.26,
+            "z": -0.09,
+            "width": 0.32,
+            "tap": "bounce"
+          },
+          {
+            "name": "hedgehog",
+            "art": "hedgehog",
+            "label": "圆圆",
+            "x": -0.04,
+            "z": 0.22,
+            "width": 0.28,
+            "tap": "hop"
+          },
+          {
+            "name": "squirrel",
+            "art": "squirrel",
+            "label": "小松鼠",
+            "x": 0.28,
+            "z": 0.13,
+            "width": 0.24,
+            "tap": "hop"
+          },
+          {
+            "name": "ant",
+            "art": "ant",
+            "label": "小蚂蚁",
+            "x": -0.3,
+            "z": 0.29,
+            "width": 0.11,
+            "tap": "hop"
+          },
+          {
+            "name": "pinecone",
+            "art": "pinecone",
+            "label": "松果",
+            "x": 0.12,
+            "z": 0.35,
+            "width": 0.1,
+            "tap": "spin"
+          }
+        ]
+      }
+    }
+  ],
+  "end": {
+    "heading": "完",
+    "text": "故事 讲完 啦。 下雨 的 时候， 你 愿意 和 {朋友:hedgehog/hop} 一起 撑 {伞:leaf/bounce} 吗？",
+    "prompt": "再读一遍，或者回到书架选一本新书。",
+    "scene": {
+      "back": "bg-sunny",
+      "layers": [
+        {
+          "name": "hedgehog",
+          "art": "hedgehog",
+          "label": "圆圆",
+          "x": -0.1,
+          "z": 0.19,
+          "width": 0.3,
+          "tap": "hop"
+        },
+        {
+          "name": "leaf",
+          "art": "leaf",
+          "label": "叶子伞",
+          "x": -0.03,
+          "z": 0.16,
+          "width": 0.38,
+          "tap": "bounce",
+          "y": 0.1,
+          "float": true
+        },
+        {
+          "name": "duck",
+          "art": "duck",
+          "label": "小鸭子",
+          "x": 0.3,
+          "z": 0.11,
+          "width": 0.22,
+          "tap": "swim"
+        },
+        {
+          "name": "sun",
+          "art": "sun",
+          "label": "太阳",
+          "x": 0.32,
+          "z": -0.29,
+          "width": 0.2,
+          "tap": "glow",
+          "y": 0.52,
+          "float": true,
+          "glow": true
+        }
+      ]
+    }
+  }
+}

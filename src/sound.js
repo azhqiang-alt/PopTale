@@ -221,6 +221,7 @@ export class SoundKit {
       bounce: () => this.pop(1), hop: () => this.boing(), jump: () => this.boing(), wiggle: () => this.pop(1.3),
       glow: () => this.sparkle(), twinkle: () => this.sparkle(), fall: () => this.whoosh(false), rise: () => this.whoosh(true),
       hoot: () => this.hoot(), ribbit: () => this.ribbit(), blink: () => this.click(), spin: () => this.whoosh(true),
+      swim: () => this.whoosh(false), shake: () => this.pop(1.6),
     };
     if (map[action]) map[action]();
   }

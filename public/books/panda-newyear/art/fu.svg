@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+<defs><radialGradient id="r" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#e8413f"/><stop offset="1" stop-color="#b3242f"/></radialGradient></defs>
+<g transform="rotate(45 200 200)">
+<rect x="70" y="70" width="260" height="260" rx="18" fill="url(#r)" stroke="#3d2a2a" stroke-width="7"/>
+<rect x="88" y="88" width="224" height="224" rx="10" fill="none" stroke="#f3c15a" stroke-width="6"/>
+</g>
+<text x="200" y="208" text-anchor="middle" dominant-baseline="middle" font-size="170" fill="#1c1c1c" font-family="Kaiti SC, STKaiti, KaiTi, PingFang SC, Hiragino Sans GB, serif" font-weight="700">福</text>
+<text x="200" y="208" text-anchor="middle" dominant-baseline="middle" font-size="170" fill="none" stroke="#f3c15a" stroke-width="2" opacity=".5" font-family="Kaiti SC, STKaiti, KaiTi, PingFang SC, Hiragino Sans GB, serif" font-weight="700">福</text>
+</svg>

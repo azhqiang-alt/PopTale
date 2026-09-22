@@ -25,11 +25,14 @@ python3 tools/build_voice.py <book> --sample 1 --voice serena   # audition: page
 .venv/bin/python tools/gen_art.py <book> lele star --count 4   # candidates + sheet.png in tools/.cache/art/<book>/<id>/
 .venv/bin/python tools/gen_art.py <book> --pick lele=1042      # cut out / shape, write art/<id>.webp, update story.json
 .venv/bin/python tools/gen_art.py --save-model                 # once: keep an 8-bit copy in tools/.cache/models/
+.venv/bin/python tools/gen_art.py <book> --todo --count 3      # candidates for every piece not picked yet
+
+python3 tools/check_book.py --all    # links, objects, actions and art files of every book (run after editing a story.json)
 
 npm run art          # regenerate the placeholder SVG art (the fallback before real art exists)
 ```
 
-There are no tests or linter yet. To check a change, run the app. A hidden or background tab pauses `requestAnimationFrame`, and with it every animation and tween. When you drive the app from browser automation, replace `requestAnimationFrame` with a `setTimeout` shim. Right after a navigation, the automation's first click can be lost; run a page script first.
+There are no tests or linter yet; `tools/check_book.py` is the check for book data. To check a change, run the app. A hidden or background tab pauses `requestAnimationFrame`, and with it every animation and tween. When you drive the app from browser automation, replace `requestAnimationFrame` with a `setTimeout` shim. Right after a navigation, the automation's first click can be lost; run a page script first.
 
 ## Architecture
 
@@ -38,7 +41,7 @@ There are no tests or linter yet. To check a change, run the app. A hidden or ba
   - `scene` is `{ back, layers[] }`. Each layer is a paper card placed in right-page space: x -0.5..0.5, z -0.7 (far edge)..0.7, y up. Options are `float` (hovers and rises), `flat` (lies on the page), `tap` (the action to play), `sound` and `glow`.
 - `voice/page-N.mp3` and `voice/timings.json`: generated. N is 1-based, and the last N is the end page.
 
-**Text format (shared contract).** Page text is split into tokens on spaces; the spaces are not displayed. A token such as `{小星星:star/fall}` links to the scene object named `star` and plays the action `fall` on it. `src/tokens.js` and `tools/build_voice.py` must tokenize identically, because `timings.json` holds exactly one `{start, end}` entry per token. If the counts differ, the narrator falls back to estimated timings.
+**Text format (shared contract).** Page text is split into tokens on spaces; the spaces are not displayed. A token such as `{小星星:star/fall}` links to the scene object named `star` and plays the action `fall` on it; a link cannot contain a space. `src/tokens.js` and `tools/build_voice.py` must tokenize identically, because `timings.json` holds exactly one `{start, end}` entry per token. If the counts differ, the narrator falls back to estimated timings.
 
 **Narration pipeline** (`tools/build_voice.py`):
 1. Synthesize each sentence separately (for natural intonation), trim its silence, and join the sentences with fixed pauses. Sentence boundaries are therefore exact.

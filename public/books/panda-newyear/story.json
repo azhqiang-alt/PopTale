@@ -1,0 +1,533 @@
+{
+  "id": "panda-newyear",
+  "title": "熊猫的新年",
+  "subtitle": "团团和奶奶一起过年",
+  "blurb": "新年快到了。熊猫团团和奶奶贴春联、挂灯笼、包饺子、看烟花，热热闹闹地过了一个年。",
+  "language": "zh",
+  "cover": "art/cover.webp",
+  "colors": {
+    "cloth": "#a33b4f",
+    "endpaper": "#f1c45b"
+  },
+  "narrator": {
+    "provider": "qwen",
+    "voice": "vivian",
+    "say": {
+      "voice": "Tingting",
+      "rate": 150
+    },
+    "instruct": "用喜气洋洋、温暖的语气，给小朋友讲过年的故事"
+  },
+  "artStyle": "Children's picture book illustration, soft gouache and watercolor texture with gentle colored-pencil lines, cute rounded shapes, storybook art.",
+  "sceneStyle": "Festive Chinese New Year palette of warm red, gold and soft lantern light.",
+  "art": {
+    "cover": {
+      "kind": "cover",
+      "subtitle": "萤火绘本 · 第四册",
+      "prompt": "A small cute panda cub in a red padded jacket holds a glowing red paper lantern in front of a traditional Chinese courtyard gate at night, golden fireworks in the dark blue sky, snow on the roof tiles.",
+      "file": "art/cover.webp",
+      "seed": 44473
+    },
+    "bg-gate": {
+      "kind": "scene",
+      "prompt": "A traditional Chinese courtyard gate with a red wooden double door, grey roof tiles with a little snow, warm daylight, a plum tree with pink blossoms beside it. No writing, no characters.",
+      "file": "art/bg-gate.webp",
+      "seed": 72982
+    },
+    "bg-courtyard": {
+      "kind": "scene",
+      "prompt": "A cozy traditional Chinese courtyard in the evening, wooden eaves and red pillars, a few red lanterns hanging, soft snow on the ground. No writing.",
+      "file": "art/bg-courtyard.webp",
+      "seed": 61215
+    },
+    "bg-kitchen": {
+      "kind": "scene",
+      "prompt": "A warm homely Chinese kitchen, a wooden table with flour, a steaming pot on the stove, a round window, soft golden light. No writing.",
+      "file": "art/bg-kitchen.webp",
+      "seed": 3046
+    },
+    "bg-fireworks": {
+      "kind": "scene",
+      "prompt": "A night sky over traditional Chinese rooftops with glowing windows, big golden and red fireworks blooming in the dark blue sky. Empty quiet street: no people, no characters.",
+      "file": "art/bg-fireworks.webp",
+      "seed": 21726
+    },
+    "bg-dinner": {
+      "kind": "scene",
+      "prompt": "An empty warm family dining room at night, a round wooden table set with bowls in the middle, red lanterns and paper-cut decorations on the window, soft light. Nobody in the room: no people, no children, no characters. No writing.",
+      "file": "art/bg-dinner.webp",
+      "seed": 21566
+    },
+    "panda": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "A small cute panda cub named Tuantuan wearing a red padded Chinese jacket with golden buttons, big shiny eyes, rosy cheeks, standing upright and smiling.",
+      "file": "art/panda.webp",
+      "seed": 43156
+    },
+    "grandma": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "A kind old grandma panda wearing a dark blue Chinese jacket and round glasses, a small bun of grey fur on her head, warm smile, standing upright.",
+      "file": "art/grandma.webp",
+      "seed": 98801
+    },
+    "lantern": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A round red Chinese paper lantern with golden caps and a golden tassel, glowing warmly from inside, no writing.",
+      "file": "art/lantern.webp",
+      "seed": 58251
+    },
+    "cat": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A small cute orange tabby kitten sitting and looking up, big curious eyes, a little red ribbon collar.",
+      "file": "art/cat.webp",
+      "seed": 89776
+    },
+    "dumplings": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A round bamboo tray with a few plump white Chinese dumplings, one with a cute smiling face.",
+      "file": "art/dumplings.webp",
+      "seed": 62387
+    },
+    "firework": {
+      "kind": "figure",
+      "outline": 5,
+      "prompt": "A single big round burst of golden and red firework sparks in the air, star shaped sparkles, cartoon style. Only the firework: no animals, no characters, no ground.",
+      "file": "art/firework.webp",
+      "seed": 47738
+    },
+    "fish": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A whole steamed fish on an oval white plate with green onions, Chinese dish, cute style.",
+      "file": "art/fish.webp",
+      "seed": 53033
+    },
+    "tangyuan": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A small blue and white porcelain bowl of round white sweet rice balls in clear soup, steam rising.",
+      "file": "art/tangyuan.webp",
+      "seed": 74955
+    },
+    "plum": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A small branch of pink plum blossoms, cute storybook style.",
+      "file": "art/plum.webp",
+      "seed": 140
+    },
+    "fu": {
+      "file": "art/fu.svg"
+    },
+    "couplet": {
+      "file": "art/couplet.svg"
+    },
+    "hongbao": {
+      "file": "art/hongbao.svg"
+    }
+  },
+  "pages": [
+    {
+      "id": "couplet",
+      "heading": "贴春联",
+      "text": "新年 快到 了。 {熊猫团团:panda/hop} 和 {奶奶:grandma/look} 一起 贴 {春联:couplet/wiggle}， 门上 还有 一个 大大的 {福:fu/spin} 字。",
+      "hint": "点点福字，它会转一转。",
+      "scene": {
+        "back": "bg-gate",
+        "layers": [
+          {
+            "name": "couplet",
+            "art": "couplet",
+            "label": "春联",
+            "x": 0.0,
+            "z": -0.4,
+            "width": 0.64,
+            "tap": "wiggle",
+            "y": 0.12,
+            "float": true
+          },
+          {
+            "name": "fu",
+            "art": "fu",
+            "label": "福",
+            "x": 0.0,
+            "z": -0.37,
+            "width": 0.18,
+            "tap": "spin",
+            "y": 0.3,
+            "float": true
+          },
+          {
+            "name": "grandma",
+            "art": "grandma",
+            "label": "奶奶",
+            "x": 0.26,
+            "z": 0.11,
+            "width": 0.3,
+            "tap": "look"
+          },
+          {
+            "name": "panda",
+            "art": "panda",
+            "label": "团团",
+            "x": -0.18,
+            "z": 0.22,
+            "width": 0.27,
+            "tap": "hop"
+          },
+          {
+            "name": "plum",
+            "art": "plum",
+            "label": "梅花",
+            "x": -0.38,
+            "z": -0.05,
+            "width": 0.2,
+            "tap": "wiggle"
+          }
+        ]
+      }
+    },
+    {
+      "id": "lantern",
+      "heading": "挂灯笼",
+      "text": "团团 踮起 脚， 挂上 {红灯笼:lantern/glow}。 {小猫:cat/look} 在 下面 {喵喵:cat/hop} 叫， 好像 在 说： “歪了， 歪了！”",
+      "hint": "点点灯笼，让它亮起来。",
+      "scene": {
+        "back": "bg-courtyard",
+        "layers": [
+          {
+            "name": "lantern",
+            "art": "lantern",
+            "label": "红灯笼",
+            "x": -0.1,
+            "z": -0.21,
+            "width": 0.18,
+            "tap": "glow",
+            "y": 0.46,
+            "float": true,
+            "glow": true
+          },
+          {
+            "name": "lantern2",
+            "art": "lantern",
+            "label": "红灯笼",
+            "x": 0.3,
+            "z": -0.25,
+            "width": 0.15,
+            "tap": "glow",
+            "y": 0.5,
+            "float": true,
+            "glow": true
+          },
+          {
+            "name": "panda",
+            "art": "panda",
+            "label": "团团",
+            "x": -0.12,
+            "z": 0.16,
+            "width": 0.28,
+            "tap": "jump"
+          },
+          {
+            "name": "cat",
+            "art": "cat",
+            "label": "小猫",
+            "x": 0.24,
+            "z": 0.27,
+            "width": 0.17,
+            "tap": "hop"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dumplings",
+      "heading": "包饺子",
+      "text": "厨房 里 热乎乎的。 {奶奶:grandma/bounce} 擀 饺子皮， 团团 包 {饺子:dumplings/bounce}。 一个， 两个， 三个， {胖乎乎:dumplings/bounce} 的！",
+      "hint": "点点饺子，数一数有几个。",
+      "scene": {
+        "back": "bg-kitchen",
+        "layers": [
+          {
+            "name": "grandma",
+            "art": "grandma",
+            "label": "奶奶",
+            "x": -0.26,
+            "z": -0.0,
+            "width": 0.3,
+            "tap": "bounce"
+          },
+          {
+            "name": "dumplings",
+            "art": "dumplings",
+            "label": "饺子",
+            "x": 0.1,
+            "z": 0.22,
+            "width": 0.3,
+            "tap": "bounce"
+          },
+          {
+            "name": "panda",
+            "art": "panda",
+            "label": "团团",
+            "x": 0.28,
+            "z": 0.06,
+            "width": 0.27,
+            "tap": "hop"
+          },
+          {
+            "name": "cat",
+            "art": "cat",
+            "label": "小猫",
+            "x": -0.36,
+            "z": 0.3,
+            "width": 0.14,
+            "tap": "look"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fireworks",
+      "heading": "放烟花",
+      "text": "天 黑 了。 {烟花:firework/rise} 砰砰 地 飞上 天， 开出 一朵朵 {金色的花:firework2/twinkle}。 团团 {捂住耳朵:panda/wiggle}， 又 笑 了。",
+      "hint": "点点烟花，让它开花。",
+      "scene": {
+        "back": "bg-fireworks",
+        "layers": [
+          {
+            "name": "firework",
+            "art": "firework",
+            "label": "烟花",
+            "x": -0.2,
+            "z": -0.29,
+            "width": 0.3,
+            "tap": "twinkle",
+            "y": 0.5,
+            "float": true,
+            "glow": true
+          },
+          {
+            "name": "firework2",
+            "art": "firework",
+            "label": "烟花",
+            "x": 0.26,
+            "z": -0.21,
+            "width": 0.24,
+            "tap": "twinkle",
+            "y": 0.4,
+            "float": true,
+            "glow": true
+          },
+          {
+            "name": "panda",
+            "art": "panda",
+            "label": "团团",
+            "x": -0.06,
+            "z": 0.22,
+            "width": 0.28,
+            "tap": "wiggle"
+          },
+          {
+            "name": "grandma",
+            "art": "grandma",
+            "label": "奶奶",
+            "x": 0.26,
+            "z": 0.16,
+            "width": 0.28,
+            "tap": "look"
+          },
+          {
+            "name": "lantern",
+            "art": "lantern",
+            "label": "红灯笼",
+            "x": -0.36,
+            "z": 0.19,
+            "width": 0.12,
+            "tap": "glow",
+            "y": 0.3,
+            "float": true,
+            "glow": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "dinner",
+      "heading": "年夜饭",
+      "text": "一家人 围 在 一起 吃 年夜饭。 桌上 有 {鱼:fish/wiggle}， 有 {饺子:dumplings/bounce}， 还有 甜甜的 {汤圆:tangyuan/bounce}。",
+      "hint": "点点桌上的菜，看看有什么。",
+      "scene": {
+        "back": "bg-dinner",
+        "layers": [
+          {
+            "name": "fish",
+            "art": "fish",
+            "label": "鱼",
+            "x": -0.14,
+            "z": 0.03,
+            "width": 0.3,
+            "tap": "wiggle"
+          },
+          {
+            "name": "dumplings",
+            "art": "dumplings",
+            "label": "饺子",
+            "x": 0.16,
+            "z": 0.06,
+            "width": 0.24,
+            "tap": "bounce"
+          },
+          {
+            "name": "tangyuan",
+            "art": "tangyuan",
+            "label": "汤圆",
+            "x": 0.02,
+            "z": 0.24,
+            "width": 0.18,
+            "tap": "bounce"
+          },
+          {
+            "name": "panda",
+            "art": "panda",
+            "label": "团团",
+            "x": -0.36,
+            "z": 0.22,
+            "width": 0.24,
+            "tap": "hop"
+          },
+          {
+            "name": "grandma",
+            "art": "grandma",
+            "label": "奶奶",
+            "x": 0.36,
+            "z": 0.19,
+            "width": 0.26,
+            "tap": "look"
+          }
+        ]
+      }
+    },
+    {
+      "id": "newyear",
+      "heading": "新年好",
+      "text": "{钟声:sky/glow} 响了， 新年 到 了！ 团团 给 奶奶 {拜年:panda/bounce}： “奶奶， 新年 好！” 奶奶 笑着 送 他 一个 {红包:hongbao/spin}。",
+      "hint": "点点红包，看它转一转。",
+      "scene": {
+        "back": "bg-courtyard",
+        "layers": [
+          {
+            "name": "lantern",
+            "art": "lantern",
+            "label": "红灯笼",
+            "x": -0.3,
+            "z": -0.25,
+            "width": 0.15,
+            "tap": "glow",
+            "y": 0.5,
+            "float": true,
+            "glow": true
+          },
+          {
+            "name": "panda",
+            "art": "panda",
+            "label": "团团",
+            "x": -0.12,
+            "z": 0.19,
+            "width": 0.28,
+            "tap": "bounce"
+          },
+          {
+            "name": "grandma",
+            "art": "grandma",
+            "label": "奶奶",
+            "x": 0.22,
+            "z": 0.11,
+            "width": 0.3,
+            "tap": "look"
+          },
+          {
+            "name": "hongbao",
+            "art": "hongbao",
+            "label": "红包",
+            "x": 0.06,
+            "z": 0.22,
+            "width": 0.1,
+            "tap": "spin",
+            "y": 0.3,
+            "float": true
+          },
+          {
+            "name": "firework",
+            "art": "firework",
+            "label": "烟花",
+            "x": 0.32,
+            "z": -0.29,
+            "width": 0.2,
+            "tap": "twinkle",
+            "y": 0.56,
+            "float": true,
+            "glow": true
+          }
+        ]
+      }
+    }
+  ],
+  "end": {
+    "heading": "完",
+    "text": "故事 讲完 啦。 {新年好:panda/bounce}！ 祝 你 新 的 一年 {快快乐乐:firework/twinkle}！",
+    "prompt": "再读一遍，或者回到书架选一本新书。",
+    "scene": {
+      "back": "bg-fireworks",
+      "layers": [
+        {
+          "name": "firework",
+          "art": "firework",
+          "label": "烟花",
+          "x": 0.0,
+          "z": -0.29,
+          "width": 0.32,
+          "tap": "twinkle",
+          "y": 0.48,
+          "float": true,
+          "glow": true
+        },
+        {
+          "name": "panda",
+          "art": "panda",
+          "label": "团团",
+          "x": -0.12,
+          "z": 0.19,
+          "width": 0.28,
+          "tap": "bounce"
+        },
+        {
+          "name": "grandma",
+          "art": "grandma",
+          "label": "奶奶",
+          "x": 0.22,
+          "z": 0.14,
+          "width": 0.28,
+          "tap": "look"
+        },
+        {
+          "name": "lantern",
+          "art": "lantern",
+          "label": "红灯笼",
+          "x": -0.36,
+          "z": 0.03,
+          "width": 0.13,
+          "tap": "glow",
+          "y": 0.34,
+          "float": true,
+          "glow": true
+        }
+      ]
+    }
+  }
+}

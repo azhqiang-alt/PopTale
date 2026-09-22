@@ -5,12 +5,14 @@ Two steps, so a person chooses what goes into the book:
     # 1. candidates: a few seeds per piece, plus a contact sheet to compare them
     .venv/bin/python tools/gen_art.py lele-star lele star --count 4
     .venv/bin/python tools/gen_art.py lele-star --all --count 3
+    .venv/bin/python tools/gen_art.py lele-star --todo --count 3   # only pieces not picked yet
 
     # 2. pick: the chosen seed is cut out / shaped, written to art/<id>.webp, story.json updated
     .venv/bin/python tools/gen_art.py lele-star --pick lele=1042 star=2201
 
 What to paint lives in story.json: "artStyle" (shared by every piece), and per art entry a
-"prompt" and a "kind" ("sceneStyle" is added for scenes and the cover only):
+"prompt" and a "kind" ("sceneStyle" is added for scenes and the cover only; an entry may
+carry its own "sceneStyle" to replace the book's):
   scene   back wall of a pop-up spread, 1024x800, cut to an arched card
   figure  a character or object, painted on white and cut out (rembg), cropped to its shape
   cover   the cover picture, 800x1120; the title is set on it in type (see --cover)
@@ -60,7 +62,8 @@ def model():
 def prompt_for(story, entry):
     kind = entry.get("kind", "figure")
     # the night palette would paint a dark backdrop behind a cut-out figure: scenes and cover only
-    palette = story.get("sceneStyle", "") if kind in ("scene", "cover") else ""
+    # an entry's own "sceneStyle" replaces the book's (a night page in a sunny book)
+    palette = entry.get("sceneStyle", story.get("sceneStyle", "")) if kind in ("scene", "cover") else ""
     return " ".join(x for x in (entry["prompt"], story.get("artStyle", ""), palette, SUFFIX[kind]) if x)
 
 
@@ -217,6 +220,7 @@ def main():
     ap.add_argument("book", nargs="?")
     ap.add_argument("ids", nargs="*", help="art ids to paint")
     ap.add_argument("--all", action="store_true", help="paint every art entry that has a prompt")
+    ap.add_argument("--todo", action="store_true", help="paint the entries with a prompt that have no picked seed yet")
     ap.add_argument("--count", type=int, default=3, help="candidates per piece")
     ap.add_argument("--steps", type=int, default=9)
     ap.add_argument("--pick", nargs="+", metavar="ID=SEED", help="put the chosen candidates into the book")
@@ -231,7 +235,10 @@ def main():
     if args.pick:
         pick(args.book, story_path, story, args.pick)
         return
-    ids = [k for k, v in story["art"].items() if v.get("prompt")] if args.all else args.ids
+    if args.all or args.todo:
+        ids = [k for k, v in story["art"].items() if v.get("prompt") and (args.all or "seed" not in v)]
+    else:
+        ids = args.ids
     if not ids:
         ap.error("name art ids or use --all")
     candidates(args.book, story, ids, args.count, args.steps)

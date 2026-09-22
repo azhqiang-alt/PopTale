@@ -27,6 +27,8 @@ export const ACTIONS = {
   hoot: { dur: 0.8, fn: (p, o) => { o.rz += Math.sin(p * Math.PI * 4) * (1 - p) * 0.12; o.sy += Math.sin(p * Math.PI * 2) * 0.05; } },
   look: { dur: 1.2, fn: (p, o) => { o.ry += Math.sin(p * Math.PI) * 0.6; } },
   yawn: { dur: 1.6, fn: (p, o) => { const k = Math.sin(p * Math.PI); o.sy += k * 0.08; o.sx -= k * 0.04; o.rz += k * 0.05; } },
+  swim: { dur: 1.4, fn: (p, o) => { const k = Math.sin(p * Math.PI); o.x += Math.sin(p * Math.PI * 2) * 0.06; o.y += Math.sin(p * Math.PI * 4) * 0.02 * k; o.rz += Math.sin(p * Math.PI * 2) * 0.12; } },
+  shake: { dur: 0.7, fn: (p, o) => { o.x += Math.sin(p * Math.PI * 10) * (1 - p) * 0.025; o.rz += Math.sin(p * Math.PI * 10) * (1 - p) * 0.08; } },
   sleep: { dur: 3, fn: (p, o) => { const k = Math.sin(p * Math.PI); o.rz += k * 0.2; o.sy -= k * 0.05; } },
 };
 

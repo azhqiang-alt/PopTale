@@ -8,28 +8,32 @@
       "color": "#2b3a78"
     },
     {
-      "id": "soon-whale",
+      "id": "whale-cloud",
       "title": "云朵里的小鲸鱼",
-      "status": "soon",
-      "color": "#2f7a8c"
+      "status": "ready",
+      "color": "#2f7a8c",
+      "cover": "books/whale-cloud/art/cover.webp"
     },
     {
-      "id": "soon-kite",
-      "title": "追风筝的下午",
-      "status": "soon",
-      "color": "#c0643a"
+      "id": "hedgehog-umbrella",
+      "title": "小刺猬的雨伞",
+      "status": "ready",
+      "color": "#4f7a3a",
+      "cover": "books/hedgehog-umbrella/art/cover.webp"
     },
     {
-      "id": "soon-panda",
+      "id": "panda-newyear",
       "title": "熊猫的新年",
-      "status": "soon",
-      "color": "#a33b4f"
+      "status": "ready",
+      "color": "#a33b4f",
+      "cover": "books/panda-newyear/art/cover.webp"
     },
     {
-      "id": "soon-boat",
+      "id": "paper-boat",
       "title": "纸船去旅行",
-      "status": "soon",
-      "color": "#5a6e2f"
+      "status": "ready",
+      "color": "#3f6fb5",
+      "cover": "books/paper-boat/art/cover.webp"
     }
   ]
 }

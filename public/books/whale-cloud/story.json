@@ -1,0 +1,504 @@
+{
+  "id": "whale-cloud",
+  "title": "云朵里的小鲸鱼",
+  "subtitle": "一条住在天上的小鲸鱼",
+  "blurb": "小鲸鱼蓝蓝住在软软的云海里。地上的花儿渴了，蓝蓝请来大乌云，下了一场及时雨。",
+  "language": "zh",
+  "cover": "art/cover.webp",
+  "colors": {
+    "cloth": "#2f7a8c",
+    "endpaper": "#bfe3ef"
+  },
+  "narrator": {
+    "provider": "qwen",
+    "voice": "vivian",
+    "say": {
+      "voice": "Tingting",
+      "rate": 150
+    },
+    "instruct": "用明亮、轻快、温柔的语气，给小朋友讲故事"
+  },
+  "artStyle": "Children's picture book illustration, soft gouache and watercolor texture with gentle colored-pencil lines, cute rounded shapes, storybook art.",
+  "sceneStyle": "Bright airy daytime palette of sky blue, soft white, pastel pink and sunny yellow.",
+  "art": {
+    "cover": {
+      "kind": "cover",
+      "subtitle": "萤火绘本 · 第二册",
+      "prompt": "A small round light-blue baby whale with a pale belly swims happily through a sea of fluffy white clouds in a bright blue sky, a tiny yellow bird flying beside it, a rainbow far away.",
+      "file": "art/cover.webp",
+      "seed": 44392
+    },
+    "bg-cloudsea": {
+      "kind": "scene",
+      "prompt": "A dreamy sea of fluffy white and pink clouds high in a bright blue sky, soft sunbeams, a pale sun.",
+      "file": "art/bg-cloudsea.webp",
+      "seed": 63086
+    },
+    "bg-sky": {
+      "kind": "scene",
+      "prompt": "A wide bright blue sky with a few small clouds, far below a patchwork of green fields and a tiny village with red roofs.",
+      "file": "art/bg-sky.webp",
+      "seed": 36919
+    },
+    "bg-storm": {
+      "kind": "scene",
+      "prompt": "A soft grey rainy sky over wide dry yellow fields, gentle rain streaks, a small farmhouse in the distance.",
+      "file": "art/bg-storm.webp",
+      "seed": 36273
+    },
+    "bg-flowerfield": {
+      "kind": "scene",
+      "prompt": "A colourful flower field after the rain, wet green grass, tiny raindrops sparkling, a clearing sky with a rainbow.",
+      "file": "art/bg-flowerfield.webp",
+      "seed": 22363
+    },
+    "bg-sunset": {
+      "kind": "scene",
+      "prompt": "A warm sunset sky of orange, pink and violet over soft clouds, the sun going down, the first evening star.",
+      "file": "art/bg-sunset.webp",
+      "seed": 51449
+    },
+    "whale": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "A small round cute light-blue baby whale named Lanlan with a pale cream belly, tiny fins, big friendly dark eyes and rosy cheeks, a little water spout on top, floating, side view.",
+      "file": "art/whale.webp",
+      "seed": 94165
+    },
+    "cloud": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "A big puffy white cloud with soft light-blue shading, a thin dark outline and a sleepy smiling face. Only the cloud: no body, no arms, no legs.",
+      "file": "art/cloud.webp",
+      "seed": 51004
+    },
+    "bird": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A tiny round cute yellow bird with small wings spread, orange beak and a cheerful face, flying.",
+      "file": "art/bird.webp",
+      "seed": 82446
+    },
+    "raincloud": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "A big round dark blue-grey rain cloud with a kind face and puffed cheeks, a thin dark outline. Only the cloud: no body, no arms, no legs.",
+      "file": "art/raincloud.webp",
+      "seed": 35563
+    },
+    "rain": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A cluster of shiny blue raindrops falling in a loose group, cartoon style.",
+      "file": "art/rain.webp",
+      "seed": 33550
+    },
+    "flower": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A tall cheerful sunflower with a friendly smiling face, green leaves, standing upright.",
+      "file": "art/flower.webp",
+      "seed": 77554
+    },
+    "snail": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A small cute snail with a spiral orange shell, peeking out with a curious smile, big eyes on stalks.",
+      "file": "art/snail.webp",
+      "seed": 56270
+    },
+    "rainbow": {
+      "kind": "figure",
+      "outline": 7,
+      "prompt": "A bright rainbow arch with soft pastel bands, its two ends resting on small white clouds.",
+      "file": "art/rainbow.webp",
+      "seed": 96550
+    },
+    "moon": {
+      "kind": "figure",
+      "outline": 6,
+      "prompt": "A small cute crescent moon with a sleepy smiling face, soft golden glow.",
+      "file": "art/moon.webp",
+      "seed": 62764
+    }
+  },
+  "pages": [
+    {
+      "id": "cloudsea",
+      "heading": "天上的云海",
+      "text": "天上 有 一片 软软的 {云海:sky/glow}。 {小鲸鱼蓝蓝:whale/swim} 在 云朵 里 游来 游去， 喷出 一串 {小水花:whale/twinkle}。",
+      "hint": "点点蓝蓝，看它喷水花。",
+      "scene": {
+        "back": "bg-cloudsea",
+        "layers": [
+          {
+            "name": "cloud",
+            "art": "cloud",
+            "label": "云朵",
+            "x": -0.3,
+            "z": -0.25,
+            "width": 0.42,
+            "tap": "bounce",
+            "y": 0.34,
+            "float": true
+          },
+          {
+            "name": "cloud2",
+            "art": "cloud",
+            "label": "云朵",
+            "x": 0.32,
+            "z": 0.05,
+            "width": 0.34,
+            "tap": "bounce",
+            "y": 0.1,
+            "float": true
+          },
+          {
+            "name": "whale",
+            "art": "whale",
+            "label": "蓝蓝",
+            "x": -0.02,
+            "z": 0.09,
+            "width": 0.46,
+            "tap": "swim",
+            "y": 0.2,
+            "float": true
+          },
+          {
+            "name": "bird",
+            "art": "bird",
+            "label": "小黄鸟",
+            "x": 0.34,
+            "z": -0.21,
+            "width": 0.14,
+            "tap": "hop",
+            "y": 0.5,
+            "float": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "bird",
+      "heading": "小鸟来做客",
+      "text": "一只 {小黄鸟:bird/hop} 飞 过来： “蓝蓝， 地上 的 {花儿:sky/glow} 好 渴 呀！” 蓝蓝 {眨眨眼:whale/blink}： “我 去 看看！”",
+      "hint": "点点小黄鸟，听听它说什么。",
+      "scene": {
+        "back": "bg-sky",
+        "layers": [
+          {
+            "name": "cloud",
+            "art": "cloud",
+            "label": "云朵",
+            "x": 0.3,
+            "z": -0.29,
+            "width": 0.4,
+            "tap": "bounce",
+            "y": 0.4,
+            "float": true
+          },
+          {
+            "name": "whale",
+            "art": "whale",
+            "label": "蓝蓝",
+            "x": -0.12,
+            "z": 0.07,
+            "width": 0.5,
+            "tap": "swim",
+            "y": 0.22,
+            "float": true
+          },
+          {
+            "name": "bird",
+            "art": "bird",
+            "label": "小黄鸟",
+            "x": 0.3,
+            "z": 0.19,
+            "width": 0.18,
+            "tap": "hop",
+            "y": 0.34,
+            "float": true
+          },
+          {
+            "name": "cloud2",
+            "art": "cloud",
+            "label": "云朵",
+            "x": -0.34,
+            "z": 0.27,
+            "width": 0.3,
+            "tap": "bounce",
+            "y": 0.05,
+            "float": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "storm",
+      "heading": "请来大乌云",
+      "text": "蓝蓝 找到 {大乌云:raincloud/bounce}。 大乌云 {鼓起肚子:raincloud/bounce}， 哗啦啦， {下雨:rain/fall} 啦！",
+      "hint": "点点大乌云，让它下雨。",
+      "scene": {
+        "back": "bg-storm",
+        "layers": [
+          {
+            "name": "raincloud",
+            "art": "raincloud",
+            "label": "大乌云",
+            "x": -0.1,
+            "z": -0.17,
+            "width": 0.58,
+            "tap": "bounce",
+            "y": 0.4,
+            "float": true
+          },
+          {
+            "name": "rain",
+            "art": "rain",
+            "label": "雨点",
+            "x": -0.12,
+            "z": -0.09,
+            "width": 0.3,
+            "tap": "fall",
+            "y": 0.18,
+            "float": true
+          },
+          {
+            "name": "whale",
+            "art": "whale",
+            "label": "蓝蓝",
+            "x": 0.26,
+            "z": 0.19,
+            "width": 0.38,
+            "tap": "swim",
+            "y": 0.26,
+            "float": true
+          },
+          {
+            "name": "bird",
+            "art": "bird",
+            "label": "小黄鸟",
+            "x": -0.36,
+            "z": 0.22,
+            "width": 0.14,
+            "tap": "hop",
+            "y": 0.3,
+            "float": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "field",
+      "heading": "花儿喝饱了",
+      "text": "{雨点:rain/fall} 落进 花田， {花儿:flower/rise} 抬起 了 头。 {小蜗牛:snail/look} 也 探出 脑袋： “谢谢 你们！”",
+      "hint": "点点花儿，再点点小蜗牛。",
+      "scene": {
+        "back": "bg-flowerfield",
+        "layers": [
+          {
+            "name": "flower",
+            "art": "flower",
+            "label": "向日葵",
+            "x": -0.3,
+            "z": -0.05,
+            "width": 0.3,
+            "tap": "wiggle"
+          },
+          {
+            "name": "flower2",
+            "art": "flower",
+            "label": "向日葵",
+            "x": 0.3,
+            "z": -0.15,
+            "width": 0.26,
+            "tap": "wiggle"
+          },
+          {
+            "name": "snail",
+            "art": "snail",
+            "label": "小蜗牛",
+            "x": 0.1,
+            "z": 0.29,
+            "width": 0.2,
+            "tap": "look"
+          },
+          {
+            "name": "rain",
+            "art": "rain",
+            "label": "雨点",
+            "x": 0.0,
+            "z": -0.21,
+            "width": 0.24,
+            "tap": "fall",
+            "y": 0.5,
+            "float": true
+          },
+          {
+            "name": "whale",
+            "art": "whale",
+            "label": "蓝蓝",
+            "x": 0.12,
+            "z": -0.05,
+            "width": 0.32,
+            "tap": "swim",
+            "y": 0.38,
+            "float": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "rainbow",
+      "heading": "彩虹滑梯",
+      "text": "雨 停了， 天边 挂起 一道 {彩虹:rainbow/glow}。 蓝蓝 顺着 彩虹 {滑:whale/swim} 下来， {小黄鸟:bird/jump} 在 后面 追。",
+      "hint": "点点彩虹，它会发光。",
+      "scene": {
+        "back": "bg-sky",
+        "layers": [
+          {
+            "name": "rainbow",
+            "art": "rainbow",
+            "label": "彩虹",
+            "x": 0.0,
+            "z": -0.29,
+            "width": 0.9,
+            "tap": "glow",
+            "glow": true
+          },
+          {
+            "name": "whale",
+            "art": "whale",
+            "label": "蓝蓝",
+            "x": 0.22,
+            "z": 0.11,
+            "width": 0.4,
+            "tap": "swim",
+            "y": 0.22,
+            "float": true
+          },
+          {
+            "name": "bird",
+            "art": "bird",
+            "label": "小黄鸟",
+            "x": -0.28,
+            "z": 0.05,
+            "width": 0.15,
+            "tap": "jump",
+            "y": 0.42,
+            "float": true
+          },
+          {
+            "name": "cloud",
+            "art": "cloud",
+            "label": "云朵",
+            "x": -0.3,
+            "z": 0.29,
+            "width": 0.3,
+            "tap": "bounce",
+            "y": 0.04,
+            "float": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "sunset",
+      "heading": "晚霞里回家",
+      "text": "太阳 下山 了， {晚霞:sky/glow} 红红的。 蓝蓝 游回 {云朵:cloud/bounce} 里， 打了 个 {哈欠:whale/yawn}， 睡着 了。",
+      "hint": "对蓝蓝说晚安吧。",
+      "scene": {
+        "back": "bg-sunset",
+        "layers": [
+          {
+            "name": "cloud",
+            "art": "cloud",
+            "label": "云朵",
+            "x": 0.0,
+            "z": 0.03,
+            "width": 0.62,
+            "tap": "bounce",
+            "y": 0.06,
+            "float": true
+          },
+          {
+            "name": "whale",
+            "art": "whale",
+            "label": "蓝蓝",
+            "x": -0.02,
+            "z": 0.11,
+            "width": 0.38,
+            "tap": "yawn",
+            "y": 0.3,
+            "float": true
+          },
+          {
+            "name": "moon",
+            "art": "moon",
+            "label": "月亮",
+            "x": 0.34,
+            "z": -0.29,
+            "width": 0.16,
+            "tap": "twinkle",
+            "y": 0.56,
+            "float": true,
+            "glow": true
+          },
+          {
+            "name": "bird",
+            "art": "bird",
+            "label": "小黄鸟",
+            "x": -0.34,
+            "z": -0.13,
+            "width": 0.13,
+            "tap": "hop",
+            "y": 0.46,
+            "float": true
+          }
+        ]
+      }
+    }
+  ],
+  "end": {
+    "heading": "完",
+    "text": "故事 讲完 啦。 下次 看到 {云朵:cloud/bounce}， 你 会 想起 {蓝蓝:whale/swim} 吗？",
+    "prompt": "再读一遍，或者回到书架选一本新书。",
+    "scene": {
+      "back": "bg-cloudsea",
+      "layers": [
+        {
+          "name": "cloud",
+          "art": "cloud",
+          "label": "云朵",
+          "x": -0.2,
+          "z": 0.11,
+          "width": 0.46,
+          "tap": "bounce",
+          "y": 0.08,
+          "float": true
+        },
+        {
+          "name": "whale",
+          "art": "whale",
+          "label": "蓝蓝",
+          "x": 0.1,
+          "z": 0.03,
+          "width": 0.44,
+          "tap": "swim",
+          "y": 0.3,
+          "float": true
+        },
+        {
+          "name": "rainbow",
+          "art": "rainbow",
+          "label": "彩虹",
+          "x": 0.0,
+          "z": -0.33,
+          "width": 0.7,
+          "tap": "glow",
+          "glow": true
+        }
+      ]
+    }
+  }
+}

@@ -146,8 +146,8 @@
             "art": "bed",
             "label": "小床",
             "x": -0.22,
-            "z": -0.05,
-            "width": 0.5,
+            "z": 0.07,
+            "width": 0.65,
             "tap": "bounce"
           },
           {
@@ -155,8 +155,8 @@
             "art": "lele",
             "label": "乐乐",
             "x": 0.2,
-            "z": 0.22,
-            "width": 0.22,
+            "z": 0.34,
+            "width": 0.29,
             "tap": "hop"
           },
           {
@@ -164,9 +164,9 @@
             "art": "star",
             "label": "小星星",
             "x": 0.28,
-            "y": 0.5,
-            "z": -0.38,
-            "width": 0.17,
+            "y": 0.57,
+            "z": -0.26,
+            "width": 0.22,
             "float": true,
             "tap": "twinkle"
           }
@@ -186,8 +186,8 @@
             "art": "flower",
             "label": "花",
             "x": -0.3,
-            "z": 0.05,
-            "width": 0.34,
+            "z": 0.17,
+            "width": 0.44,
             "tap": "wiggle"
           },
           {
@@ -195,8 +195,8 @@
             "art": "lele",
             "label": "乐乐",
             "x": 0.0,
-            "z": 0.24,
-            "width": 0.22,
+            "z": 0.36,
+            "width": 0.29,
             "tap": "hop"
           },
           {
@@ -204,9 +204,9 @@
             "art": "lantern",
             "label": "小灯笼",
             "x": 0.13,
-            "y": 0.12,
-            "z": 0.3,
-            "width": 0.09,
+            "y": 0.14,
+            "z": 0.42,
+            "width": 0.12,
             "float": true,
             "tap": "glow"
           },
@@ -215,9 +215,9 @@
             "art": "fireflies",
             "label": "萤火虫",
             "x": 0.28,
-            "y": 0.34,
-            "z": -0.15,
-            "width": 0.39,
+            "y": 0.39,
+            "z": -0.03,
+            "width": 0.51,
             "float": true,
             "tap": "twinkle",
             "glow": true
@@ -238,8 +238,8 @@
             "art": "tree",
             "label": "大树",
             "x": -0.28,
-            "z": -0.22,
-            "width": 0.55,
+            "z": -0.1,
+            "width": 0.72,
             "tap": "wiggle"
           },
           {
@@ -247,9 +247,9 @@
             "art": "owl",
             "label": "猫头鹰",
             "x": -0.24,
-            "y": 0.36,
-            "z": -0.1,
-            "width": 0.22,
+            "y": 0.41,
+            "z": 0.02,
+            "width": 0.29,
             "float": true,
             "tap": "hoot"
           },
@@ -258,8 +258,8 @@
             "art": "mushroom",
             "label": "蘑菇",
             "x": 0.33,
-            "z": 0.06,
-            "width": 0.24,
+            "z": 0.18,
+            "width": 0.31,
             "tap": "glow",
             "glow": true
           },
@@ -268,8 +268,8 @@
             "art": "lele",
             "label": "乐乐",
             "x": 0.03,
-            "z": 0.28,
-            "width": 0.21,
+            "z": 0.4,
+            "width": 0.27,
             "tap": "hop"
           },
           {
@@ -277,9 +277,9 @@
             "art": "star",
             "label": "亮光",
             "x": 0.34,
-            "y": 0.44,
-            "z": -0.42,
-            "width": 0.12,
+            "y": 0.51,
+            "z": -0.3,
+            "width": 0.16,
             "float": true,
             "tap": "twinkle"
           }
@@ -299,8 +299,8 @@
             "art": "lily",
             "label": "荷叶",
             "x": 0.04,
-            "z": 0.02,
-            "width": 0.5,
+            "z": 0.14,
+            "width": 0.65,
             "flat": true,
             "tap": "wiggle"
           },
@@ -310,8 +310,8 @@
             "label": "小星星",
             "x": 0.04,
             "y": 0.02,
-            "z": 0.02,
-            "width": 0.15,
+            "z": 0.14,
+            "width": 0.2,
             "tap": "glow"
           },
           {
@@ -319,8 +319,8 @@
             "art": "frog",
             "label": "青蛙",
             "x": -0.32,
-            "z": 0.24,
-            "width": 0.2,
+            "z": 0.36,
+            "width": 0.26,
             "tap": "hop",
             "sound": "ribbit"
           },
@@ -329,8 +329,8 @@
             "art": "lele",
             "label": "乐乐",
             "x": 0.33,
-            "z": 0.3,
-            "width": 0.21,
+            "z": 0.42,
+            "width": 0.27,
             "tap": "hop"
           }
         ]
@@ -349,8 +349,8 @@
             "art": "lele",
             "label": "乐乐",
             "x": -0.08,
-            "z": 0.2,
-            "width": 0.24,
+            "z": 0.32,
+            "width": 0.31,
             "tap": "jump"
           },
           {
@@ -358,9 +358,9 @@
             "art": "star",
             "label": "星星",
             "x": 0.1,
-            "y": 0.28,
-            "z": 0.12,
-            "width": 0.17,
+            "y": 0.32,
+            "z": 0.24,
+            "width": 0.22,
             "float": true,
             "tap": "rise"
           }
@@ -380,8 +380,8 @@
             "art": "bed",
             "label": "小床",
             "x": -0.14,
-            "z": 0.02,
-            "width": 0.55,
+            "z": 0.14,
+            "width": 0.72,
             "tap": "bounce"
           },
           {
@@ -389,8 +389,8 @@
             "art": "lele",
             "label": "乐乐",
             "x": 0.26,
-            "z": 0.26,
-            "width": 0.2,
+            "z": 0.38,
+            "width": 0.26,
             "tap": "sleep"
           },
           {
@@ -398,9 +398,9 @@
             "art": "star",
             "label": "星星",
             "x": 0.02,
-            "y": 0.52,
-            "z": -0.4,
-            "width": 0.18,
+            "y": 0.6,
+            "z": -0.28,
+            "width": 0.23,
             "float": true,
             "tap": "twinkle"
           }
@@ -420,8 +420,8 @@
           "art": "lele",
           "label": "乐乐",
           "x": -0.16,
-          "z": 0.2,
-          "width": 0.22,
+          "z": 0.32,
+          "width": 0.29,
           "tap": "hop"
         },
         {
@@ -429,9 +429,9 @@
           "art": "fireflies",
           "label": "萤火虫",
           "x": 0.26,
-          "y": 0.2,
-          "z": 0.05,
-          "width": 0.34,
+          "y": 0.23,
+          "z": 0.17,
+          "width": 0.44,
           "float": true,
           "tap": "twinkle",
           "glow": true
@@ -441,9 +441,9 @@
           "art": "star",
           "label": "星星",
           "x": 0.18,
-          "y": 0.5,
-          "z": -0.4,
-          "width": 0.16,
+          "y": 0.57,
+          "z": -0.28,
+          "width": 0.21,
           "float": true,
           "tap": "twinkle"
         }

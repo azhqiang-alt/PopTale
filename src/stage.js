@@ -12,8 +12,9 @@ const FOV = 38;
 const VIEWS = {
   shelf: { center: [0, SHELF_Y + 0.3, SHELF_Z], half: [1.55, 0.55], dir: [0, 0.12, 1] },
   closed: { center: [0.52, 0.05, 0.05], half: [0.75, 0.85], dir: [0, 1.1, 0.95] },
-  open: { center: [0.1, 0.28, -0.1], half: [0.98, 0.8], dir: [0, 0.85, 1] },
-  // phones: the right page with its pop-up fills the width, the left page runs off the edge
+  // the right page with its pop-up fills the free rect; the left page runs under the text panel
+  open: { center: [0.5, 0.3, -0.1], half: [0.54, 0.66], dir: [0, 0.8, 1] },
+  // phones: the same, with the text panel below the book
   openNarrow: { center: [0.46, 0.3, -0.1], half: [0.58, 0.72], dir: [0, 0.85, 1] },
 };
 

@@ -155,7 +155,7 @@ async function loadBook(meta, onProgress) {
     { ...story.end, isEnd: true, tokens: tokenize(story.end.text) },
   ];
   const color = story.colors?.cloth;
-  const leftTex = pages.map((p, i) => pageTexture({ side: "left", number: i * 2 + 1, heading: p.heading, color }));
+  const leftTex = pages.map((p, i) => pageTexture({ side: "left", number: i * 2 + 1 }));
   const rightTex = pages.map((p, i) => pageTexture({ side: "right", number: i * 2 + 2 }));
   onProgress(0.85, "正在准备声音…");
   narrator.setBook(base, pages.map((p) => p.tokens));

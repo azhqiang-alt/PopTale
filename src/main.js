@@ -10,7 +10,7 @@ import { Reading } from "./reading.js";
 import { UI } from "./ui.js";
 import { Sparkles, clamp, updateTweens } from "./anim.js";
 import { spokenWeight, tokenize } from "./tokens.js";
-import { loadArt, pageTexture, placeholderCover } from "./textures.js";
+import { fontsReady, loadArt, pageTexture, placeholderCover } from "./textures.js";
 import { loadProgress, loadSettings, saveProgress, saveSettings } from "./store.js";
 
 /* The app: shelf -> picking (the book flies to the table while it loads) -> book (open,
@@ -51,6 +51,7 @@ async function init() {
 
   ui.setLoading(0.1, "正在准备书架…");
   const library = (await (await fetch("books/index.json")).json()).books;
+  await fontsReady(library.map((b) => b.title).join("") + "敬请期待0123456789");
   let done = 0;
   await Promise.all(library.map(async (b) => {
     covers[b.id] = b.cover ? await loadArt(b.cover, { maxSize: 800 }).catch(() => placeholderCover(b.title, b.color)) : placeholderCover(b.title, b.color);
@@ -457,6 +458,19 @@ function bindInput() {
   };
   addEventListener("pointerdown", unlock);
   addEventListener("keydown", unlock);
+  // iOS: play through the silent switch (Safari 17+), like any audio book app
+  try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch { /* not supported */ }
+  // another app, a locked screen or a call interrupts the audio: pause the story (the child
+  // taps play to go on) and wake the audio again on the next touch
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      if (state.reading === "playing") toggleReading();
+      audio.suspend().catch(() => {});
+    } else if (settings.music || state.reading !== "idle") {
+      audio.resume().catch(() => {});
+    }
+  });
+  addEventListener("pointerdown", () => { if (audio.state !== "running") audio.resume().catch(() => {}); });
   addEventListener("keydown", onKey);
   addEventListener("resize", onResize);
 }

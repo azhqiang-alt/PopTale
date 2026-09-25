@@ -56,7 +56,9 @@ SUFFIX = {
               "no ground, no cast shadow, no text, no border, no other objects.",
     "cover": "Book cover illustration with a calm open area in the upper third for the title. No text, no letters.",
 }
-FONTS = ["/System/Library/Fonts/Hiragino Sans GB.ttc", "/System/Library/Fonts/PingFang.ttc", "/System/Library/Fonts/STHeiti Medium.ttc"]
+# LXGW WenKai (SIL OFL), fetched by tools/build_fonts.py; it is set into the covers we publish,
+# so it must be a font whose licence allows that (not a system font)
+FONTS = [str(ROOT / "tools/.cache/fonts/LXGWWenKai-Medium.ttf")]
 
 
 def load_story(book):
@@ -237,9 +239,8 @@ def title_cover(im, title, subtitle):
     """Set the title in type on a soft paper band (image models misdraw Chinese titles)."""
     im = im.convert("RGBA")
     w, h = im.size
-    font_path = next((f for f in FONTS if Path(f).exists()), None)
-    big = ImageFont.truetype(font_path, 88) if font_path else ImageFont.load_default()
-    small = ImageFont.truetype(font_path, 36) if font_path else ImageFont.load_default()
+    font_path = next((f for f in FONTS if Path(f).exists()), None) or sys.exit("no cover font: run tools/build_fonts.py first")
+    big, small = ImageFont.truetype(font_path, 88), ImageFont.truetype(font_path, 36)
     band = Image.new("RGBA", im.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(band)
     d.rounded_rectangle((50, 110, w - 50, 360), radius=40, fill=(255, 248, 234, 225))

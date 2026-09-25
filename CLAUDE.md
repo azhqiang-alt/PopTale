@@ -27,12 +27,16 @@ python3 tools/build_voice.py <book> --sample 1 --voice serena   # audition: page
 .venv/bin/python tools/gen_art.py --save-model                 # once: keep an 8-bit copy in tools/.cache/models/
 .venv/bin/python tools/gen_art.py <book> --todo --count 3      # candidates for every piece not picked yet
 
-python3 tools/check_book.py --all    # links, objects, actions and art files of every book (run after editing a story.json)
+python3 tools/check_book.py --all    # links, objects, actions, art files and stale narration of every book (npm run check)
+
+npm test             # tokenizer contract JS<->Python, timings.json counts, tool unit tests
+npm run test:e2e     # build, serve, and drive WebKit as iPhone 13 / iPhone 13 in WeChat / iPhone SE
+.venv/bin/python tools/build_fonts.py   # web font slices into public/fonts (npm run fonts; rerun after adding a book)
 
 npm run art          # regenerate the placeholder SVG art (the fallback before real art exists)
 ```
 
-There are no tests or linter yet; `tools/check_book.py` is the check for book data. To check a change, run the app. A hidden or background tab pauses `requestAnimationFrame`, and with it every animation and tween. When you drive the app from browser automation, replace `requestAnimationFrame` with a `setTimeout` shim. Right after a navigation, the automation's first click can be lost; run a page script first.
+CI (`.github/workflows/ci.yml`) runs `npm test`, `npm run check`, the build and the WebKit smoke test. There is no linter. To check a visual change, run the app; `tests/e2e/smoke.mjs` shows how to drive it in Playwright WebKit (tap the shelf book, then `#btn-open`, `#btn-next`). A hidden or background tab pauses `requestAnimationFrame`, and with it every animation and tween. When you drive the app from browser automation, replace `requestAnimationFrame` with a `setTimeout` shim. Right after a navigation, the automation's first click can be lost; run a page script first.
 
 ## Architecture
 
@@ -71,7 +75,12 @@ There is no speech recognizer. Clips are cached in `tools/.cache/voice/`, keyed 
 
 Planned: a set of preset books, then users uploading their own e-books and writing their own story collections. A book will then have to be produced from plain text by a pipeline: split into pages, link words to scene objects, write art prompts, paint and voice. Keep `story.json` the only contract between the tools and the reader. Keep the `tools/` scripts runnable without interaction, so a backend job can drive them later.
 
+**Font.** Story text, headings and canvas text use LXGW WenKai (SIL OFL), cut by `tools/build_fonts.py` into WOFF2 slices with `unicode-range`: slice 0 holds every character the books and UI use, the other slices the rest of GB2312. Canvas text is drawn once, so `textures.fontsReady(text)` must resolve before drawing it. Covers set their title with the full TTF in `tools/.cache/fonts/`. Do not preload the slices: WebKit then downloads them twice. Never render a system font (PingFang, Hiragino, Kaiti) into a published image.
+
+**Mobile and WeChat.** The web app is the first product, opened mostly inside WeChat (WebKit on iOS). Audio: `navigator.audioSession.type = "playback"` so narration plays through the silent switch; when the page is hidden the story pauses and the context suspends, and any tap resumes it. Short phones (`max-height: 700px`) get a tighter text card.
+
 ## Constraints
 
 - Keep all content original. The project copies how StoryComet works, not its code, art, audio, stories or branding.
+- Third-party components and their licences are listed in `THIRD_PARTY.md`; anything shipped to users also goes into `public/THIRD_PARTY_NOTICES.txt`.
 - Settings and progress live in `localStorage` (`store.js`), and every access is wrapped because storage can be unavailable.

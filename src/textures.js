@@ -4,7 +4,15 @@ import * as THREE from "three";
    paper, wood, wall and page surfaces. */
 
 const PAPER = "#fbf3e2";
-const HEADING_FONT = '"Kaiti SC", "STKaiti", "KaiTi", "PingFang SC", serif';
+const HEADING_FONT = '"LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "PingFang SC", serif';
+
+/** Canvas text is drawn once and never re-rendered, so load the web font's slices for `text`
+    first. Gives up after `ms`, and then the fallback font is used. */
+export function fontsReady(text, ms = 3000) {
+  if (!document.fonts) return Promise.resolve();
+  const load = Promise.all([400, 700].map((w) => document.fonts.load(`${w} 32px "LXGW WenKai"`, text))).catch(() => {});
+  return Promise.race([load, new Promise((r) => setTimeout(r, ms))]);
+}
 
 export function loadImage(url) {
   return new Promise((resolve, reject) => {

@@ -7,6 +7,8 @@ Per page it checks: the text tokenizes (same rule as src/tokens.js); every {word
 link names an object on that page ("sky" is the back card) and a known action; every layer's art
 id exists in "art"; and art files that should already exist are there (a missing file is only a
 warning while the piece has a prompt and no picked seed, since gen_art.py will paint it).
+If the book has narration, voice/timings.json must have one entry per token on every page:
+after the text changes, the narration is stale until build_voice.py runs again.
 Exits 1 if anything is wrong. Standard library only.
 """
 import argparse
@@ -69,7 +71,24 @@ def check(book_id, actions):
                     errors.append(f"{pid}: {m.group(2)} links to {target}, which is not on this page")
                 if action and action not in actions:
                     errors.append(f"{pid}: {m.group(2)} plays unknown action {action}")
+    check_voice(book_id, pages, errors, warnings)
     return errors, warnings
+
+
+def check_voice(book_id, pages, errors, warnings):
+    voice = BOOKS / book_id / "voice"
+    timings_path = voice / "timings.json"
+    if not timings_path.exists():
+        warnings.append("no narration yet (voice/timings.json): run tools/build_voice.py")
+        return
+    timings = json.loads(timings_path.read_text(encoding="utf-8"))
+    for n, (pid, page) in enumerate(pages, 1):
+        count = len(page.get("text", "").split())
+        got = timings.get(f"page-{n}")
+        if got is None or not (voice / f"page-{n}.mp3").exists():
+            errors.append(f"{pid}: no narration (voice/page-{n}.mp3): run tools/build_voice.py")
+        elif len(got) != count:
+            errors.append(f"{pid}: narration has {len(got)} words, the text {count}: the text changed, run tools/build_voice.py")
 
 
 def main():

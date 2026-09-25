@@ -10,7 +10,7 @@
   --glass: rgba(26, 24, 56, 0.72);
   --shadow: 0 10px 30px rgba(10, 8, 30, 0.35);
   --round: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-  --story: "Kaiti SC", "STKaiti", "KaiTi", "PingFang SC", serif;
+  --story: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "PingFang SC", serif;
   --bar-h: 64px;
 }
 
@@ -60,8 +60,8 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 #btn-sound .cross { display: none; }
 #btn-sound.off .cross { display: block; }
 #btn-sound.off .waves { display: none; }
-.page-dots { flex: 1; display: flex; justify-content: center; gap: 8px; }
-.dot { width: 14px; height: 14px; padding: 0; border: 2px solid rgba(255, 244, 214, 0.6); border-radius: 50%; background: transparent; transition: transform 0.2s, background 0.2s; }
+.page-dots { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.dot { flex: 0 1 14px; min-width: 6px; aspect-ratio: 1; padding: 0; border: 2px solid rgba(255, 244, 214, 0.6); border-radius: 50%; background: transparent; transition: transform 0.2s, background 0.2s; }
 .dot.read { background: rgba(255, 214, 107, 0.7); border-color: #ffd66b; }
 .dot.current { transform: scale(1.35); border-color: #fff; }
 .star-count { display: flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 999px; background: var(--glass); font-size: 16px; }
@@ -127,17 +127,29 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 /* ---------- phones and portrait screens: the card becomes a sheet at the bottom ---------- */
 @media (max-aspect-ratio: 1/1), (max-width: 760px) {
   :root { --bar-h: 58px; }
-  .text-panel { left: 10px; right: 10px; top: auto; bottom: max(10px, env(safe-area-inset-bottom)); transform: none; width: auto; max-height: 46vh; }
+  .text-panel { left: 10px; right: 10px; top: auto; bottom: max(10px, env(safe-area-inset-bottom)); transform: none; width: auto; max-height: 52vh; }
   .text-inner { padding: 20px 22px 6px; }
   .text-panel h2 { font-size: 22px; margin-bottom: 8px; }
-  .words { font-size: 24px; line-height: 1.8; }
+  .words { font-size: 24px; line-height: 1.7; }
   .large .words { font-size: 30px; }
   .hint { margin-top: 10px; font-size: 14px; }
   .controls { padding: 6px 0 12px; gap: 18px; }
   .round { width: 46px; height: 46px; }
   .round.big { width: 58px; height: 58px; }
   .book-card { right: 50%; top: auto; bottom: 18px; transform: translateX(50%); animation: none; }
-  .page-dots { gap: 6px; }
-  .dot { width: 11px; height: 11px; }
+  .page-dots { gap: 5px; }
+  .dot { flex-basis: 11px; }
   .word-zoom { font-size: 48px; top: 30%; }
+}
+/* short phones (iPhone SE and the like): a tighter card so a page's text still fits */
+@media (max-width: 760px) and (max-height: 700px) {
+  .text-inner { padding: 14px 18px 4px; }
+  .eyebrow { display: none; }
+  .text-panel h2 { font-size: 19px; margin: 2px 0 6px; }
+  .words { font-size: 21px; line-height: 1.65; letter-spacing: 0; }
+  .large .words { font-size: 26px; }
+  .hint { margin-top: 6px; font-size: 13px; }
+  .controls { padding: 4px 0 8px; }
+  .round { width: 42px; height: 42px; }
+  .round.big { width: 52px; height: 52px; }
 }

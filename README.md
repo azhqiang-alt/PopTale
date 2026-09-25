@@ -46,6 +46,9 @@ npm install
 npm run dev      # 开发服务器，带 --host，同一局域网的手机也能打开
 npm run build    # 静态构建到 dist/，base 为 "./"，可部署到任意路径
 npm run preview  # 本地预览构建结果
+npm test         # 单元测试：分词约定、旁白时间轴、工具函数
+npm run check    # 检查所有书的数据
+npm run test:e2e # 在 WebKit 里模拟 iPhone、微信和 iPhone SE 跑一遍阅读流程
 ```
 
 构建产物要通过 HTTP 访问，不能直接双击用 `file://` 打开（浏览器会拦截 `fetch` 和模块脚本）。
@@ -79,6 +82,10 @@ tools/
   gen_art.py            生成插画候选图、抠图、写入书里
   check_book.py         检查书的数据
   placeholder_art.py    生成占位 SVG 插画
+  build_fonts.py        裁剪霞鹜文楷，生成网页字体分片
+  test_tools.py         工具的单元测试
+public/fonts/           网页字体分片（生成的）
+tests/                  分词约定测试、WebKit 冒烟测试
 ```
 
 ## 一本书的格式
@@ -206,8 +213,20 @@ python3 tools/build_voice.py <book> --provider say --set rate=180
 - 翻页时镜头轻微起伏，封面内页加花纹
 - 小问答和收集要素
 - 萤火虫改成粒子效果
-- 在 iPhone Safari 上测试
-- 部署到静态托管，方便分享
+- 部署到国内静态托管（需要域名和 ICP 备案），首先保证在微信里打开体验良好
+- 插画按页加载（书变长以后）
+
+## 商业化第 0 阶段（地基）
+
+目标：先以网页形态面向国内用户，主要在微信里打开；小程序以后用 web-view 套网页。
+
+- [x] 字体换成开源可商用的霞鹜文楷，封面书名重新排版
+- [x] 在 WebKit（iPhone Safari 和微信 iOS 的内核）里测试：修好小屏幕文字被截断、顶栏按钮被挤出屏幕的问题；静音键打开时照常播放旁白；切到后台时暂停
+- [x] 首次加载：进书架约 1.5 MB，打开一本书约 1.9 MB
+- [x] 第三方许可证清单：`THIRD_PARTY.md`
+- [x] 自动化测试和 GitHub CI
+- [ ] iPhone 真机确认（微信里打开）
+- [ ] 商标查询、确定运营主体、域名和 ICP 备案（由负责人办理）
 
 ## 说明
 

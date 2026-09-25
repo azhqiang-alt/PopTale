@@ -9,13 +9,18 @@ syllable-timed, one character per syllable. No speech recognizer is needed.
     python3 tools/build_voice.py lele-star                    # provider from story.json narrator
     python3 tools/build_voice.py lele-star --provider say     # macOS system voice
     python3 tools/build_voice.py lele-star --voice serena     # try another voice
+    python3 tools/build_voice.py lele-star --set speed=0.9    # any other provider setting
     python3 tools/build_voice.py lele-star --sample 1         # only page 1, to audition a voice
 
-Providers:
+Providers (the PROVIDERS table; see "providers" below for how to add one):
   qwen    Qwen3-TTS through mlx-audio, run by tools/qwen_tts_worker.py in the mlx-audio
           environment (MLX_AUDIO_PYTHON, default ~/.venvs/mlx-audio/bin/python). Offline.
   say     macOS `say`.
   openai  OpenAI speech API (OPENAI_API_KEY). Untested.
+
+Settings come from story.json "narrator": its shared fields (voice, instruct, speed...), then
+the provider's own block, which wins (e.g. "say": {"voice": "Tingting", "rate": 150}), then
+--voice/--speed/--rate/--set on the command line.
 
 Needs ffmpeg. Output: public/books/<id>/voice/page-N.mp3, title.mp3, timings.json.
 Page N is 1-based; the last page is the end card. Clips are cached in tools/.cache/voice.
@@ -78,14 +83,26 @@ def run(cmd, **kw):
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, **kw)
 
 
-def decode(src):
-    """Any audio file -> mono float samples at RATE, with the silence at both ends trimmed."""
-    trim = "silenceremove=start_periods=1:start_threshold=-45dB"
-    raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", str(src), "-af", f"{trim},areverse,{trim},areverse",
+TRIM = "silenceremove=start_periods=1:start_threshold=-45dB"
+
+
+def pcm(src, af=None):
+    """Any audio file -> mono float samples at RATE, through an optional ffmpeg filter."""
+    raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", str(src), *(["-af", af] if af else []),
                           "-ac", "1", "-ar", str(RATE), "-f", "f32le", "-"], check=True, capture_output=True).stdout
     samples = array.array("f")
     samples.frombytes(raw)
     return samples
+
+
+def decode(src):
+    """The clip with the silence at both ends trimmed."""
+    return pcm(src, f"{TRIM},areverse,{TRIM},areverse")
+
+
+def lead_trimmed(src):
+    """Seconds of silence decode() cuts from the start (to shift a provider's word times)."""
+    return (len(pcm(src)) - len(pcm(src, TRIM))) / RATE
 
 
 def offline_env():
@@ -95,14 +112,41 @@ def offline_env():
     return env
 
 
-# ---------- providers: synth_many([(text, path)]) writes one audio file per text ----------
+# ---------- providers ----------
+# A provider turns sentences into audio files. To add one, write a class and decorate it with
+# @provider. It needs:
+#   name               the value of narrator "provider" (and --provider) that selects it
+#   ext                the type of audio file it writes
+#   __init__(cfg)      cfg: its settings from story.json (see provider_config)
+#   key()              a string naming everything that changes the sound; clips are cached under it
+#   synth_many(items)  write one audio file per (text, path)
+# If the service reports when each word is said, also set marks = True and have synth_many
+# return, for each item, a list of {"text", "start", "end"} (seconds into the file it wrote).
+# The marks may be characters or words; their texts must spell the sentence (punctuation and
+# spaces aside). Those times are then used instead of the estimate from the audio.
+
+PROVIDERS = {}
 
 
+def provider(cls):
+    PROVIDERS[cls.name] = cls
+    return cls
+
+
+def provider_config(narrator, name, overrides):
+    """The narrator's shared fields, then the provider's own block, then command-line overrides."""
+    cfg = {k: v for k, v in narrator.items() if k != "provider" and not isinstance(v, dict)}
+    cfg.update(narrator.get(name) or {})
+    cfg.update({k: v for k, v in overrides.items() if v is not None})
+    return cfg
+
+
+@provider
 class Say:
-    ext = ".aiff"
+    name, ext, marks = "say", ".aiff", False
 
-    def __init__(self, voice, rate):
-        self.voice, self.rate = voice, rate
+    def __init__(self, cfg):
+        self.voice, self.rate = cfg.get("voice", "Tingting"), int(cfg.get("rate", 150))
 
     def key(self):
         return f"say:{self.voice}:{self.rate}"
@@ -112,19 +156,21 @@ class Say:
             run(["say", "-v", self.voice, "-r", str(self.rate), "-o", str(out), text])
 
 
+@provider
 class Qwen:
-    ext = ".wav"
+    name, ext, marks = "qwen", ".wav", False
 
-    def __init__(self, voice, instruct, speed):
-        self.voice, self.instruct, self.speed = voice, instruct, speed
+    def __init__(self, cfg):
+        self.voice, self.instruct = cfg.get("voice", "vivian"), cfg.get("instruct")
+        self.speed, self.model = float(cfg.get("speed", 1.0)), cfg.get("model", QWEN_MODEL)
         self.python = os.environ.get("MLX_AUDIO_PYTHON", str(Path.home() / ".venvs/mlx-audio/bin/python"))
 
     def key(self):
-        return f"qwen:{QWEN_MODEL}:{self.voice}:{self.speed}:{self.instruct}"
+        return f"qwen:{self.model}:{self.voice}:{self.speed}:{self.instruct}"
 
     def synth_many(self, items):
         with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as f:
-            json.dump({"model": QWEN_MODEL, "voice": self.voice, "instruct": self.instruct, "lang": "zh", "speed": self.speed,
+            json.dump({"model": self.model, "voice": self.voice, "instruct": self.instruct, "lang": "zh", "speed": self.speed,
                        "items": [{"text": t, "out": str(o)} for t, o in items]}, f, ensure_ascii=False)
         try:
             subprocess.run([self.python, str(ROOT / "tools/qwen_tts_worker.py"), f.name], check=True, env=offline_env())
@@ -132,19 +178,21 @@ class Qwen:
             os.unlink(f.name)
 
 
+@provider
 class OpenAI:
-    ext = ".wav"
+    name, ext, marks = "openai", ".wav", False
 
-    def __init__(self, voice, instruct):
-        self.voice, self.instruct = voice, instruct
+    def __init__(self, cfg):
+        self.voice, self.instruct = cfg.get("voice", "nova"), cfg.get("instruct")
+        self.model = cfg.get("model", "gpt-4o-mini-tts")
         self.api_key = os.environ.get("OPENAI_API_KEY") or sys.exit("OPENAI_API_KEY is not set")
 
     def key(self):
-        return f"openai:{self.voice}:{self.instruct}"
+        return f"openai:{self.model}:{self.voice}:{self.instruct}"
 
     def synth_many(self, items):
         for text, out in items:
-            body = json.dumps({"model": "gpt-4o-mini-tts", "voice": self.voice, "input": text,
+            body = json.dumps({"model": self.model, "voice": self.voice, "input": text,
                                "instructions": self.instruct, "response_format": "wav"}).encode()
             req = urllib.request.Request("https://api.openai.com/v1/audio/speech", data=body,
                                          headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"})
@@ -153,14 +201,15 @@ class OpenAI:
 
 
 class Clips:
-    """Trimmed audio per sentence, cached on disk by provider settings and text."""
+    """Trimmed audio per sentence, cached on disk by provider settings and text, with the
+    provider's word marks beside it when it gives them."""
 
     def __init__(self, provider, tmp):
         self.provider, self.tmp = provider, Path(tmp)
         CACHE.mkdir(parents=True, exist_ok=True)
 
-    def path(self, text):
-        return CACHE / (hashlib.sha1(f"{self.provider.key()}|{text}".encode()).hexdigest()[:20] + ".f32")
+    def path(self, text, ext=".f32"):
+        return CACHE / (hashlib.sha1(f"{self.provider.key()}|{text}".encode()).hexdigest()[:20] + ext)
 
     def prefetch(self, texts):
         missing = sorted({t for t in texts if PUNCT.sub("", t) and not self.path(t).exists()})
@@ -168,14 +217,22 @@ class Clips:
             return
         print(f"synthesizing {len(missing)} sentences…", flush=True)
         items = [(t, self.tmp / f"clip{i}{self.provider.ext}") for i, t in enumerate(missing)]
-        self.provider.synth_many(items)
-        for text, out in items:
+        marks = self.provider.synth_many(items) if self.provider.marks else None
+        for k, (text, out) in enumerate(items):
+            if marks and marks[k]:
+                lead = lead_trimmed(out)
+                shifted = [{"text": m["text"], "start": m["start"] - lead, "end": m["end"] - lead} for m in marks[k]]
+                self.path(text, ".marks.json").write_text(json.dumps(shifted, ensure_ascii=False), encoding="utf-8")
             self.path(text).write_bytes(decode(out).tobytes())
 
     def get(self, text):
         samples = array.array("f")
         samples.frombytes(self.path(text).read_bytes())
         return samples
+
+    def marks(self, text):
+        path = self.path(text, ".marks.json")
+        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 
 # ---------- alignment inside a sentence ----------
@@ -292,6 +349,30 @@ def align_sentence(clip, toks, idxs):
     return out
 
 
+def spans_from_marks(marks, toks, idxs, dur):
+    """{token index: (start, end)} from the provider's own word times, or None when the marks
+    do not spell the sentence. A mark covering several characters is shared out evenly."""
+    chars = []
+    for m in marks:
+        spoken = PUNCT.sub("", m["text"])
+        step = (m["end"] - m["start"]) / max(1, len(spoken))
+        chars += [(m["start"] + k * step, m["start"] + (k + 1) * step) for k in range(len(spoken))]
+    text = "".join(PUNCT.sub("", toks[i]) for i in idxs)
+    if "".join(PUNCT.sub("", m["text"]) for m in marks).lower() != text.lower():
+        return None
+    clamp = lambda t: round(min(max(t, 0.0), dur), 3)
+    out, c, last = {}, 0, 0.0
+    for i in idxs:
+        n = len(PUNCT.sub("", toks[i]))
+        if n:
+            last = clamp(chars[c + n - 1][1])
+            out[i] = (clamp(chars[c][0]), last)
+            c += n
+        else:
+            out[i] = (last, last)
+    return out
+
+
 # ---------- pages ----------
 
 
@@ -316,7 +397,11 @@ def build_page(clips, toks):
                 timings[i] = {"start": round(offset, 3), "end": round(offset, 3)}
             continue
         clip = clips.get(text)
-        for i, (s, e) in align_sentence(clip, toks, idxs).items():
+        marks = clips.marks(text)
+        spans = marks and spans_from_marks(marks, toks, idxs, len(clip) / RATE)
+        if marks and not spans:
+            print(f"  note: the provider's word marks do not match {text!r}; estimating from the audio")
+        for i, (s, e) in (spans or align_sentence(clip, toks, idxs)).items():
             timings[i] = {"start": round(offset + s, 3), "end": round(offset + e, 3)}
         audio.extend(clip)
         if si < len(groups) - 1:
@@ -336,29 +421,26 @@ def write_mp3(samples, out, tmp):
          "-ac", "1", "-codec:a", "libmp3lame", "-b:a", "96k", str(out)])
 
 
-def make_provider(name, n, args):
-    if name == "say":
-        say = n.get("say", {})
-        return Say(args.voice or say.get("voice", "Tingting"), args.rate or say.get("rate", 150))
-    if name == "qwen":
-        return Qwen(args.voice or n.get("voice", "vivian"), n.get("instruct"), args.speed or n.get("speed", 1.0))
-    return OpenAI(args.voice or n.get("openaiVoice", "nova"), n.get("instruct"))
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("book")
-    ap.add_argument("--provider", choices=["qwen", "say", "openai"])
+    ap.add_argument("--provider", choices=sorted(PROVIDERS))
     ap.add_argument("--voice", help="override the voice in story.json")
     ap.add_argument("--rate", type=int, help="words per minute for `say`")
     ap.add_argument("--speed", type=float, help="speed for qwen (1.0 = normal)")
+    ap.add_argument("--set", nargs="+", default=[], metavar="KEY=VALUE", help="override any provider setting")
     ap.add_argument("--sample", type=int, help="only build page N into tools/.cache/samples (does not touch the book)")
     args = ap.parse_args()
 
     base = ROOT / "public/books" / args.book
     story = json.loads((base / "story.json").read_text(encoding="utf-8"))
     n = story.get("narrator", {})
-    provider = make_provider(args.provider or n.get("provider", "say"), n, args)
+    name = args.provider or n.get("provider", "say")
+    if name not in PROVIDERS:
+        sys.exit(f"unknown narrator provider {name!r} (known: {', '.join(sorted(PROVIDERS))})")
+    overrides = {"voice": args.voice, "rate": args.rate, "speed": args.speed}
+    overrides.update(kv.split("=", 1) for kv in args.set)
+    provider = PROVIDERS[name](provider_config(n, name, overrides))
     pages = [tokens(p["text"]) for p in story["pages"]] + [tokens(story["end"]["text"])]
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -368,7 +450,7 @@ def main():
             clips.prefetch([sentence_text(toks, s) for s in sentences(toks)])
             samples, _ = build_page(clips, toks)
             SAMPLES.mkdir(parents=True, exist_ok=True)
-            out = SAMPLES / f"{provider.key().split(':')[0]}-{getattr(provider, 'voice', '')}-page-{args.sample}.mp3"
+            out = SAMPLES / f"{provider.name}-{getattr(provider, 'voice', '')}-page-{args.sample}.mp3"
             write_mp3(samples, out, tmp)
             print(out)
             return

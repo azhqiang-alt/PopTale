@@ -1,4 +1,5 @@
-"""Paints a book's illustrations with Z-Image Turbo (mflux, runs locally on Apple Silicon).
+"""Paints a book's illustrations. The painter comes from story.json "painter" (default: Z-Image
+Turbo through mflux, local on Apple Silicon); see "painters" below for how to add one.
 
 Two steps, so a person chooses what goes into the book:
 
@@ -6,6 +7,7 @@ Two steps, so a person chooses what goes into the book:
     .venv/bin/python tools/gen_art.py lele-star lele star --count 4
     .venv/bin/python tools/gen_art.py lele-star --all --count 3
     .venv/bin/python tools/gen_art.py lele-star --todo --count 3   # only pieces not picked yet
+    .venv/bin/python tools/gen_art.py lele-star star --painter openai --set quality=high
 
     # 2. pick: the chosen seed is cut out / shaped, written to art/<id>.webp, story.json updated
     .venv/bin/python tools/gen_art.py lele-star --pick lele=1042 star=2201
@@ -17,18 +19,30 @@ carry its own "sceneStyle" to replace the book's):
   figure  a character or object, painted on white and cut out (rembg), cropped to its shape
   cover   the cover picture, 800x1120; the title is set on it in type (see --cover)
 
-Candidates are kept in tools/.cache/art/<book>/<id>/<seed>.png. Runs in the project .venv
-(mflux, rembg, pillow). ZIMAGE_MODEL points at a saved quantized model if there is one
-(see --save-model), otherwise the Hugging Face weights are quantized to 8 bits on load.
+Painters (the PAINTERS table):
+  zimage  Z-Image Turbo via mflux, offline. Settings: steps (9). ZIMAGE_MODEL points at a saved
+          quantized model if there is one (see --save-model), otherwise the Hugging Face
+          weights are quantized to 8 bits on load.
+  openai  OpenAI image API (OPENAI_API_KEY). Settings: model (gpt-image-1), quality. Untested.
+
+"painter" in story.json is {"provider": "zimage", ...settings}; --painter and --set override it.
+
+Each candidate has a number: the seed, for painters that take one. It is kept in
+tools/.cache/art/<book>/<id>/<number>.png, with <number>.json naming the painter and prompt.
+Picking writes the number to the art entry's "seed" and the painter to its "painter".
+Runs in the project .venv (mflux, rembg, pillow).
 """
 import argparse
+import base64
+import io
 import json
 import os
 import random
 import sys
+import urllib.request
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = ROOT / "tools/.cache/art"
@@ -50,13 +64,77 @@ def load_story(book):
     return path, json.loads(path.read_text(encoding="utf-8"))
 
 
-def model():
-    # the model is big: import and load only when painting
-    from mflux.models.common.config import ModelConfig
-    from mflux.models.z_image import ZImageTurbo
-    path = os.environ.get("ZIMAGE_MODEL") or (str(LOCAL_MODEL) if LOCAL_MODEL.exists() else None)
-    print(f"loading Z-Image Turbo ({path or 'Tongyi-MAI/Z-Image-Turbo, 8-bit'})…", flush=True)
-    return ZImageTurbo(model_config=ModelConfig.z_image_turbo(), model_path=path, quantize=None if path else 8)
+# ---------- painters ----------
+# A painter turns a prompt into a picture. To add one, write a class and decorate it with
+# @painter. It needs:
+#   name       the value of story.json "painter.provider" (and --painter) that selects it
+#   seeded     True if the same seed paints the same picture again (else the seed is ignored)
+#   __init__(cfg)  cfg: the painter settings; load nothing heavy here, --pick builds one too
+#   key()      a string naming the model and the settings that change the picture
+#   paint(prompt, width, height, seed) -> PIL image; another size is cropped to fit
+
+
+PAINTERS = {}
+
+
+def painter(cls):
+    PAINTERS[cls.name] = cls
+    return cls
+
+
+def make_painter(story, name=None, overrides=()):
+    cfg = dict(story.get("painter") or {})
+    name = name or cfg.pop("provider", "zimage")
+    cfg.pop("provider", None)
+    cfg.update(overrides)
+    if name not in PAINTERS:
+        sys.exit(f"unknown painter {name!r} (known: {', '.join(sorted(PAINTERS))})")
+    return PAINTERS[name](cfg)
+
+
+@painter
+class ZImage:
+    name, seeded = "zimage", True
+
+    def __init__(self, cfg):
+        self.steps = int(cfg.get("steps", 9))
+        self.model = None
+
+    def key(self):
+        return f"zimage:turbo:{self.steps}"
+
+    def paint(self, prompt, width, height, seed):
+        if self.model is None:
+            # the model is big: import and load only when painting
+            from mflux.models.common.config import ModelConfig
+            from mflux.models.z_image import ZImageTurbo
+            path = os.environ.get("ZIMAGE_MODEL") or (str(LOCAL_MODEL) if LOCAL_MODEL.exists() else None)
+            print(f"loading Z-Image Turbo ({path or 'Tongyi-MAI/Z-Image-Turbo, 8-bit'})…", flush=True)
+            self.model = ZImageTurbo(model_config=ModelConfig.z_image_turbo(), model_path=path, quantize=None if path else 8)
+        image = self.model.generate_image(seed=seed, prompt=prompt, num_inference_steps=self.steps, width=width, height=height)
+        return image.image if hasattr(image, "image") else image
+
+
+@painter
+class OpenAIImage:
+    name, seeded = "openai", False
+    SIZES = {"1024x1024": 1.0, "1536x1024": 1.5, "1024x1536": 1 / 1.5}
+
+    def __init__(self, cfg):
+        self.model, self.quality = cfg.get("model", "gpt-image-1"), cfg.get("quality", "medium")
+
+    def key(self):
+        return f"openai:{self.model}:{self.quality}"
+
+    def paint(self, prompt, width, height, seed):
+        api_key = os.environ.get("OPENAI_API_KEY") or sys.exit("OPENAI_API_KEY is not set")
+        size = min(self.SIZES, key=lambda k: abs(self.SIZES[k] - width / height))
+        body = json.dumps({"model": self.model, "prompt": prompt, "size": size, "quality": self.quality, "n": 1}).encode()
+        req = urllib.request.Request("https://api.openai.com/v1/images/generations", data=body,
+                                     headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=300) as res:
+            data = json.loads(res.read())["data"][0]["b64_json"]
+        return Image.open(io.BytesIO(base64.b64decode(data)))
 
 
 def prompt_for(story, entry):
@@ -67,8 +145,7 @@ def prompt_for(story, entry):
     return " ".join(x for x in (entry["prompt"], story.get("artStyle", ""), palette, SUFFIX[kind]) if x)
 
 
-def candidates(book, story, ids, count, steps):
-    m = model()
+def candidates(book, story, ids, count, painter):
     for art_id in ids:
         entry = story["art"][art_id]
         kind = entry.get("kind", "figure")
@@ -76,11 +153,15 @@ def candidates(book, story, ids, count, steps):
         out = CACHE / book / art_id
         out.mkdir(parents=True, exist_ok=True)
         text = prompt_for(story, entry)
-        seeds = [random.randrange(1, 100000) for _ in range(count)]
-        for seed in seeds:
-            image = m.generate_image(seed=seed, prompt=text, num_inference_steps=steps, width=w, height=h)
-            (image.image if hasattr(image, "image") else image).save(out / f"{seed}.png")
-            print(f"  {art_id}: seed {seed}", flush=True)
+        numbers = [random.randrange(1, 100000) for _ in range(count)]
+        for number in numbers:
+            image = painter.paint(text, w, h, number).convert("RGB")
+            if image.size != (w, h):
+                image = ImageOps.fit(image, (w, h), Image.LANCZOS)
+            image.save(out / f"{number}.png")
+            (out / f"{number}.json").write_text(json.dumps({"painter": painter.key(), "prompt": text}, ensure_ascii=False),
+                                               encoding="utf-8")
+            print(f"  {art_id}: {'seed' if painter.seeded else 'candidate'} {number}", flush=True)
         sheet(out, art_id)
 
 
@@ -191,6 +272,9 @@ def pick(book, story_path, story, choices):
         im.save(art_dir / name, "WEBP", quality=88, method=6)
         entry["file"] = f"art/{name}"
         entry["seed"] = int(seed)
+        meta = src.with_suffix(".json")
+        if meta.exists():
+            entry["painter"] = json.loads(meta.read_text(encoding="utf-8"))["painter"]
         if kind == "figure":
             entry["outline"] = entry.get("outline", 6) or 6
         if kind == "cover":
@@ -222,7 +306,9 @@ def main():
     ap.add_argument("--all", action="store_true", help="paint every art entry that has a prompt")
     ap.add_argument("--todo", action="store_true", help="paint the entries with a prompt that have no picked seed yet")
     ap.add_argument("--count", type=int, default=3, help="candidates per piece")
-    ap.add_argument("--steps", type=int, default=9)
+    ap.add_argument("--painter", choices=sorted(PAINTERS), help="override story.json painter.provider")
+    ap.add_argument("--steps", type=int, help="inference steps for zimage (default 9)")
+    ap.add_argument("--set", nargs="+", default=[], metavar="KEY=VALUE", help="override any painter setting")
     ap.add_argument("--pick", nargs="+", metavar="ID=SEED", help="put the chosen candidates into the book")
     ap.add_argument("--save-model", action="store_true", help="quantize the model to 8 bits once and keep it locally")
     args = ap.parse_args()
@@ -241,7 +327,10 @@ def main():
         ids = args.ids
     if not ids:
         ap.error("name art ids or use --all")
-    candidates(args.book, story, ids, args.count, args.steps)
+    overrides = dict(kv.split("=", 1) for kv in args.set)
+    if args.steps:
+        overrides["steps"] = args.steps
+    candidates(args.book, story, ids, args.count, make_painter(story, args.painter, overrides))
 
 
 if __name__ == "__main__":

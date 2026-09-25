@@ -126,7 +126,7 @@ python3 tools/check_book.py --all    # 检查链接、物件、动作和插画�
 
 目前的流程：先手写 `story.json`，然后生成插画和旁白。全部在本机运行，不需要 API key。
 
-### 1. 插画（Z-Image Turbo，通过 mflux 在 Apple Silicon 上本地运行）
+### 1. 插画（默认 Z-Image Turbo，通过 mflux 在 Apple Silicon 上本地运行）
 
 用项目里的 `.venv`（mflux、rembg、pillow）。
 
@@ -139,7 +139,7 @@ python3 tools/check_book.py --all    # 检查链接、物件、动作和插画�
 
 候选图和对比图 `sheet.png` 在 `tools/.cache/art/<book>/<id>/`。
 
-### 2. 旁白（Qwen3-TTS，通过 mlx-audio 离线运行）
+### 2. 旁白（默认 Qwen3-TTS，通过 mlx-audio 离线运行）
 
 需要系统 python3（只用标准库）、PATH 上的 ffmpeg，以及装好 Qwen3-TTS 的 mlx-audio 环境（默认 `~/.venvs/mlx-audio`，可用 `MLX_AUDIO_PYTHON` 指定）。
 
@@ -154,6 +154,36 @@ python3 tools/build_voice.py <book> --provider say              # 用 macOS 系�
 ### 3. 上架
 
 把书加进 `public/books/index.json`，运行 `check_book.py --all`，再用 `npm run dev` 打开检查。
+
+## 接入其他模型
+
+语音和绘图模型都可以替换，阅读器不受影响，它只读成品文件。
+
+**选用**：在 `story.json` 里指定，也可以在命令行临时覆盖。
+
+```jsonc
+"narrator": {
+  "provider": "qwen", "voice": "vivian", "instruct": "……",   // 公共设置
+  "say": { "voice": "Tingting", "rate": 150 }                 // 某个服务自己的设置，优先于公共设置
+},
+"painter": { "provider": "zimage", "steps": 9 }                // 不写时默认 zimage
+```
+
+```bash
+python3 tools/build_voice.py <book> --provider say --set rate=180
+.venv/bin/python tools/gen_art.py <book> star --painter openai --set quality=high
+```
+
+| | 已有 | 登记表 |
+|---|---|---|
+| 语音 | `qwen`（本地）、`say`（macOS）、`openai`（未测试） | `tools/build_voice.py` 的 `PROVIDERS` |
+| 绘图 | `zimage`（本地）、`openai`（未测试） | `tools/gen_art.py` 的 `PAINTERS` |
+
+**新增一个语音服务**：写一个类，用 `@provider` 登记，提供 `name`、`ext`、`key()` 和 `synth_many(items)`。如果服务能给出每个词的时间戳，再设 `marks = True`，并让 `synth_many` 返回时间戳，这样就不用估算对齐，英文等其他语言也能逐词高亮。
+
+**新增一个绘图模型**：写一个类，用 `@painter` 登记，提供 `name`、`seeded`、`key()` 和 `paint(prompt, width, height, seed)`。尺寸不对的图会自动裁切。不支持 seed 的模型会忽略它，这时候选编号只用来区分候选图。选定插画时，所用的绘图模型会记在该插画的 `painter` 字段里。
+
+两个文件里登记表上方的注释写明了接口细节。
 
 ## 路线图
 

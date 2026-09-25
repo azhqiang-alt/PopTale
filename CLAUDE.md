@@ -21,7 +21,7 @@ npm run build        # static build into dist/ (base "./", deployable under any 
 python3 tools/build_voice.py <book>                         # whole book -> public/books/<book>/voice/
 python3 tools/build_voice.py <book> --sample 1 --voice serena   # audition: page 1 into tools/.cache/samples/
 
-# illustrations (Z-Image Turbo via mflux; prompts in story.json "artStyle" + art[id].prompt/kind)
+# illustrations (painter from story.json "painter", default Z-Image Turbo via mflux; prompts in "artStyle" + art[id].prompt/kind)
 .venv/bin/python tools/gen_art.py <book> lele star --count 4   # candidates + sheet.png in tools/.cache/art/<book>/<id>/
 .venv/bin/python tools/gen_art.py <book> --pick lele=1042      # cut out / shape, write art/<id>.webp, update story.json
 .venv/bin/python tools/gen_art.py --save-model                 # once: keep an 8-bit copy in tools/.cache/models/
@@ -48,7 +48,9 @@ There are no tests or linter yet; `tools/check_book.py` is the check for book da
 2. Inside a sentence, find the comma pauses in the energy envelope: pick the quiet gap closest to where each phrase should end by character count.
 3. Inside a phrase, share the voiced time out by character count (Chinese has one syllable per character) and snap word boundaries onto pauses.
 
-There is no speech recognizer. Clips are cached in `tools/.cache/voice/`, keyed by provider settings and text.
+There is no speech recognizer. Clips are cached in `tools/.cache/voice/`, keyed by provider settings and text. A provider that reports word times (`marks = True`) skips steps 2–3 for sentences its marks spell exactly.
+
+**Swappable models.** Voices are the `PROVIDERS` table in `build_voice.py` and painters are the `PAINTERS` table in `gen_art.py`. Each is a small class registered with `@provider` / `@painter`; the comment above each table lists what a class needs. A provider's settings are the `narrator` fields, then `narrator[<provider>]`, then `--set`. A painter's settings are `story.json "painter"` (`{"provider": "zimage", ...}`), then `--painter`/`--set`. `pick` records the painter's `key()` on the art entry. `key()` feeds the voice cache key, so changing an existing provider's `key()` re-synthesizes every book.
 
 **Runtime flow** (`src/main.js`): `state.view` goes loading → shelf → picking → book.
 - **Picking.** The shelf copy of the book (`shelf.js`) flies to the table while `loadBook` runs. Then the real `Book3D` replaces it. `state.pick` is bumped when a pick is abandoned, so a late load disposes itself.
